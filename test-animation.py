@@ -5,7 +5,7 @@ import clutter
 import glob, time
 import os.path
 from clutter import keysyms
-from widget.animation import Animator, MoveAndRotateAnimation
+from widget.animation import Animator, MoveAndRotateAnimation, TurnAroundAnimation
 global current_anim
 current_anim=0
 global anims_label
@@ -40,6 +40,8 @@ def on_button_press(stage, event, factory, actor, label):
 	[anim.apply(actor) for anim in anims]
 	[anim.start() for anim in anims]
 
+def anim_done(*args):
+	print "Yessss !!!", args
 def main(image_directory):
 	global current_anim
 	global anims_label
@@ -56,6 +58,9 @@ def main(image_directory):
 	stage.add(label)
 	stage.add(actor)
 	actor.set_position(500, 500)
+	anim = TurnAroundAnimation(center=(500,500), radius=300, angle=360, tilt=(360,360,300), duration=500, style=clutter.LINEAR)
+	anim.apply(actor)
+	anim.start()
 	stage.connect('button-press-event', on_button_press, factory, actor, label)
 	stage.connect('key-press-event', on_input)
 	stage.show()

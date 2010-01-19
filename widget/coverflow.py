@@ -1,7 +1,7 @@
 import clutter
 import gobject
-from widget.utils import *
-
+from widget.utils import clamp, clamp_angle
+from widget.animation import MoveAnimation, RotateAnimation, ScaleAnimation, OpacityAnimation
 class FlowBrowser(clutter.Group):
 	"""A base class for items picker views like coverflow, override get_items_number and get_item to use it"""
 
@@ -17,7 +17,6 @@ class FlowBrowser(clutter.Group):
 	def __init__(self):
 		clutter.Group.__init__(self)
 		self._setup_events()
-		self._setup_timeline_and_alpha()
 		self.items = []
 		self.reload()
 
@@ -41,12 +40,6 @@ class FlowBrowser(clutter.Group):
 	def _setup_events(self):
 		self.set_reactive(True)
 		self.connect('scroll-event', self.on_scroll)
-
-	def _setup_timeline_and_alpha(self):
-		self.timeline = clutter.Timeline(self.ANIM_DURATION_MS)
-		self.timeline.connect('completed', self.anim_completed)
-
-		self.alpha = clutter.Alpha(self.timeline, clutter.EASE_IN_SINE)
 
 	def _set_selection(self, selection):
 		"""Change the current selection and reflect change in the view"""
@@ -97,11 +90,9 @@ class FlowBrowser(clutter.Group):
 		index = self.items.index(item)
 		delta = index - self.selection
 
-		self.anim_behaviors.extend(self.get_behaviors(item, delta, move_forward, self.alpha))
-
-		self.timeline.rewind()
-		self.timeline.start()
-
+		anim = self.get_behaviors(item, delta, move_forward, self.alpha)
+		anim.connect("completed", self.anim_completed)
+		anim.start()
 		if self.items[index-1]:
 			if delta>0: item.lower_actor(self.items[index-1])
 			else: item.raise_actor(self.items[index-1])
@@ -152,6 +143,33 @@ class FlowBrowser(clutter.Group):
 		if self.items.index(item) == self.selection:
 			self.emit('selection-activated',item)
 		self.selection = self.items.index(item)
+
+class CoverflowItemRotateAnimation(MoveAnimation, RotateAnimation, ScaleAnimation, OpacityAnimation):
+	def __init__(self, destination, angle, axis, direction, scale, opacity, duration, style, timeline=None, alpha=None):
+		MoveAnimation.__init__(self, destination, duration, style, timeline=timeline, alpha=alpha)
+		RotateAnimation.__init__(self, angle, axis, direction, duration, style, timeline=self._timeline, alpha=self._alpha)
+		ScaleAnimation.__init__(self, scale, scale, duration, style, timeline=self._timeline, alpha=self._alpha)
+		OpacityAnimation.__init__(self, opacity, duration, style, timeline=self._timeline, alpha=self._alpha)
+
+	def do_prepare_animation(self):
+		behaviours = MoveAnimation.do_prepare_animation(self)
+		behaviours.extend(RotateAnimation.do_prepare_animation(self))
+		behaviours.extend(ScaleAnimation.do_prepare_animation(self))
+		behaviours.extend(OpacityAnimation.do_prepare_animation(self))
+		return behaviours
+		
+class CoverflowItemNotRotateAnimation(MoveAnimation, ScaleAnimation, OpacityAnimation):
+	def __init__(self, destination, scale, opacity, duration, style, timeline=None, alpha=None):
+		MoveAnimation.__init__(self, destination, duration, style, timeline=timeline, alpha=alpha)
+		ScaleAnimation.__init__(self, scale, scale, duration, style, timeline=self._timeline, alpha=self._alpha)
+		OpacityAnimation.__init__(self, opacity, duration, style, timeline=self._timeline, alpha=self._alpha)
+
+	def do_prepare_animation(self):
+		behaviours = MoveAnimation.do_prepare_animation(self)
+		behaviours.extend(ScaleAnimation.do_prepare_animation(self))
+		behaviours.extend(OpacityAnimation.do_prepare_animation(self))
+		return behaviours
+		
 
 class HorizontalFlowBrowser(FlowBrowser):
 	"""A coverflow like flowbrowser"""
@@ -233,23 +251,17 @@ class HorizontalFlowBrowser(FlowBrowser):
 			point = ((self.get_size()[0]-item.get_size()[0]*self.MAX_SCALE)/2+self.calc_pos(delta), (self.get_size()[1]-item.get_size()[1]*self.MAX_SCALE)/2)
 		else:
 			point = ((self.get_size()[0]-item.get_size()[0]*self.MIN_SCALE)/2+self.calc_pos(delta), (self.get_size()[1]-item.get_size()[1]*self.MIN_SCALE)/2)
-		(p_behavior, tl) = animate_actor_to_point(item, point, timeline=self.timeline, alpha=self.alpha)
-		behaviors.append(p_behavior)
-
 		scale = self.calc_scale(delta)
-		(s_behavior, tl) = animate_actor_to_scale(item, scale, scale, timeline=self.timeline, alpha=self.alpha)
-		behaviors.append(s_behavior)
-
 		angle_start = item.get_rotation(clutter.Y_AXIS)[0]
 		angle_start = clamp_angle(angle_start)
 		(angle_end, direction) = self.calc_angle(delta, move_forward)
 		if abs(angle_start-angle_end)>1 and abs(angle_start-angle_end)<359:
-			(r_behavior, tl) = animate_actor_to_angle(item, clutter.Y_AXIS, angle_end, direction, (size[0]/2, 0, 0), timeline = self.timeline, alpha=self.alpha)
-			behaviors.append(r_behavior)
+			anim = CoverflowItemRotateAnimation(point, angle_end, clutter.Y_AXIS, direction, scale, self.calc_opacity(delta), self.ANIM_DURATION_MS, clutter.EASE_IN_SINE)
+		else:
+			anim = CoverflowItemNotRotateAnimation(point, scale, self.calc_opacity(delta), self.ANIM_DURATION_MS, clutter.EASE_IN_SINE)
+		anim.apply(item)
+		
+		return anim
 
-		(o_behavior, tl) = animate_actor_to_opacity(item, self.calc_opacity(delta), timeline=self.timeline, alpha=self.alpha)
-		behaviors.append(o_behavior)
 
-		return behaviors
-
-
+		

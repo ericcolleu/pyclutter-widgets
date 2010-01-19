@@ -1,8 +1,17 @@
 import clutter
+import gobject
 from widget.utils import clamp_angle
 
-class Animation(object):
+class Animation(clutter.Behaviour):
+	__gtype_name__ = 'Animation'
+	__gsignals__ = {
+		'completed' : ( \
+		  gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, () \
+		),
+	}
+
 	def __init__(self, duration, style, timeline=None, alpha=None):
+		clutter.Behaviour.__init__(self)
 		self._timeline = timeline or clutter.Timeline(duration)
 		self._timeline.connect("completed", self._on_done)
 		self._alpha = alpha or clutter.Alpha(self._timeline, style)
@@ -14,6 +23,7 @@ class Animation(object):
 	
 	def _on_done(self, timeline):
 		[behaviour.remove_all() for behaviour in self._behaviours]
+		self.emit("completed")
 		
 	def prepare(self):
 		self._behaviours = self.do_prepare_animation()
@@ -60,6 +70,7 @@ class MoveAndRotateAnimation(MoveAnimation, RotateAnimation):
 	def do_prepare_animation(self):
 		behaviours = [MoveAnimation.do_prepare_animation(self),]
 		behaviours += [RotateAnimation.do_prepare_animation(self),]
+		return behaviours
 		
 class ScaleAnimation(Animation):
 	def __init__(self, scale_x, scale_y, duration, style, timeline=None, alpha=None):
@@ -86,6 +97,25 @@ class OpacityAnimation(Animation):
 			opacity_start=self._actor.get_opacity(), 
 			opacity_end=self._opacity, 
 			alpha=self._alpha),]
+
+class TurnAroundAnimation(Animation):
+	def __init__(self, center, radius, angle, tilt, duration, style, timeline=None, alpha=None):
+		Animation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
+		self._radius = radius
+		self._center = center
+		self._angle = angle
+		self._tilt = tilt
+
+	def do_prepare_animation(self):
+		behaviour = clutter.BehaviourEllipse(
+			self._alpha,
+			self._center[0],
+			self._center[1],
+			self._radius*2,
+			self._radius*2,
+			360, self._angle)
+		behaviour.set_tilt(*self._tilt)
+		return [behaviour,]
 
 class Animator(object):
 	def __init__(self, default_duration_ms=500, default_style=clutter.LINEAR):
