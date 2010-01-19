@@ -7,10 +7,6 @@ import os.path
 from clutter import keysyms
 from widget.button import Button
 
-def on_pressed(stage, event):
-	print "ppppppppppppppppppppppp"
-def on_released(stage, event):
-	print "rrrrrrrrrrrrrrrrrrrrr"
 def on_input(stage, event):
 	if event.keyval == keysyms.q:
 		clutter.main_quit()
@@ -26,8 +22,6 @@ def main(image_directory):
 	button = Button(released_background=released, pressed_background=pressed)
 	stage.add(button)
 	button.set_position(512, 200)
-	button.connect("pressed", on_pressed)
-	button.connect("released", on_released)
 	stage.connect('key-press-event', on_input)
 	stage.show()
 	clutter.main()
