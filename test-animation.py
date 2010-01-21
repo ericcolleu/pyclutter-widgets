@@ -9,7 +9,7 @@ from widget.animation import Animator, MoveAndRotateAnimation, TurnAroundAnimati
 global current_anim
 current_anim=0
 global anims_label
-anims_label = ["Move", "Rotate", "Scale", "Opacify",]
+anims_label = ["Move", "Rotate", "Scale", "Opacify", "Depth"]
 
 def on_input(stage, event):
 	if event.keyval == keysyms.q:
@@ -37,6 +37,10 @@ def on_button_press(stage, event, factory, actor, label):
 		elif current_anim == 3:
 			anims.append(factory.createScaleAnimation(1.0, 1.0))
 			anims.append(factory.createOpacityAnimation(100))
+		elif current_anim == 4:
+			anims.append(factory.createScaleAnimation(1.0, 1.0))
+			anims.append(factory.createOpacityAnimation(255))
+			anims.append(factory.createDepthAnimation(100))
 	[anim.apply(actor) for anim in anims]
 	[anim.start() for anim in anims]
 
