@@ -29,25 +29,29 @@ def main(image_directory):
 	stage.set_title('Coverflow')
 	item_images = glob.glob(os.path.join(image_directory, "*.png"))
 	x, y, width, height = (
-		int(stage.get_width()/4), 
+		int(stage.get_width()/4),
 		int(stage.get_height()-stage.get_height()/3),
 		int(stage.get_width()/2),
 		int(stage.get_height()-stage.get_height()/4),
 	)
-	
-	coverflow = Coverflow(size=(512, 512), item_size=(128,128))
+
+	coverflow = Coverflow(size=(1024, 512), item_size=(128,128), angle=70, inter_item_space=50, selection_depth=200)
 	stage.add(coverflow)
 	n_items = len(item_images)
 	items = []
 	stage.show()
 	for image in item_images:
 		coverflow.add(clutter.Texture(image))
-	coverflow.set_position(200, 200)
+	coverflow.set_position(0, 200)
 	stage.connect('key-press-event', on_input, coverflow, item_images)
 	clutter.main()
 
 if __name__ == '__main__':
-	main("./images")
+	import sys
+	if len(sys.argv[1:]):
+		main(sys.argv[1])
+	else:
+		main("./images")
 
 
 
