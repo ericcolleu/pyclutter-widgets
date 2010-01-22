@@ -1,20 +1,20 @@
 import clutter
-from widget.reflect import ReflectedItem
 
 class Carrousel(clutter.Group):
 	__gtype_name__ = 'Carrousel'
-	def __init__(self, x=0, y=0, width=200, height=200, *children):
+	def __init__(self, x=0, y=0, size=(512,512), item_size=(128,128), *children):
 		clutter.Group.__init__(self)
 		self._x = x
 		self._y = y
-		self._width = width
-		self._height = height
+		self._width = size[0]
+		self._height = size[1]
+		self._item_size = item_size
 		self._children = []
 		self._step = 0
 		self._tilt = (300.0, 360.0, 360.0)
 		self._timeline = clutter.Timeline(duration=500)
 		self._timeline.connect('completed', self.anim_completed)
-		self._alpha = clutter.Alpha(self._timeline, clutter.EASE_IN_OUT_BACK)
+		self._alpha = clutter.Alpha(self._timeline, clutter.LINEAR)
 		if children:
 			self.add(*children)
 
@@ -23,7 +23,7 @@ class Carrousel(clutter.Group):
 			self._step = int(360 / len(self._children))
 		else:
 			self._step = 0
-			
+
 	def __update_item(self, item, angle):
 		item.ellipse = clutter.BehaviourEllipse(
 			self._alpha,
@@ -43,10 +43,10 @@ class Carrousel(clutter.Group):
 		self._timeline.start()
 
 	def add(self, *children):
-		items = [ReflectedItem(child) for child in children]
-		self.do_add(*items)
-		clutter.Group.add(self, *items)
-		
+		[child.set_size(*self._item_size) for child in children]
+		self.do_add(*children)
+		clutter.Group.add(self, *children)
+
 	def do_add(self, *children):
 		for child in children:
 			self._children.append(child)
@@ -57,7 +57,7 @@ class Carrousel(clutter.Group):
 	def remove(self, *children):
 		clutter.Group.remove(self, *children)
 		self.do_remove(*children)
-		
+
 	def do_remove(self, *children):
 		for child in children:
 			if child in self._children:
@@ -74,7 +74,7 @@ class Carrousel(clutter.Group):
 	def anim_completed(self, timeline):
 		self.set_reactive(True)
 		print "anim_completed"
-		
+
 	def turn_item_right(self, item):
 		item.ellipse.set_direction(clutter.ROTATE_CW)
 		item.ellipse.set_angle_start(item.angle)
@@ -88,18 +88,14 @@ class Carrousel(clutter.Group):
 		item.ellipse.set_angle_end(item.angle)
 
 	def next(self):
-		if self.get_reactive():
-			self.set_reactive(False)
-			for child in self._children:
-				self.turn_item_right(child)
-			self._timeline.start()
-		
+		for child in self._children:
+			self.turn_item_right(child)
+		self._timeline.start()
+
 	def previous(self):
-		if self.get_reactive():
-			self.set_reactive(False)
-			for child in self._children:
-				self.turn_item_left(child)
-			self._timeline.start()
+		for child in self._children:
+			self.turn_item_left(child)
+		self._timeline.start()
 
 
 

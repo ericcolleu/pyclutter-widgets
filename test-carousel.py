@@ -23,30 +23,33 @@ def on_input(stage, event, carrousel, item_images):
 
 def main(image_directory):
 	stage = clutter.Stage()
-	stage.set_size(1024, 768)
+	stage.set_size(1024,768)
 	stage.connect('destroy', clutter.main_quit)
 	stage.set_color(clutter.Color(0, 0, 0, 255))
 	stage.set_title('Carrousel')
 	item_images = glob.glob(os.path.join(image_directory, "*.png"))
 	x, y, width, height = (
-		int(stage.get_width()/4), 
+		int(stage.get_width()/4),
 		int(stage.get_height()-stage.get_height()/3),
 		int(stage.get_width()/2),
 		int(stage.get_height()-stage.get_height()/4),
 	)
-	
-	carrousel = Carrousel(width=512, height=512)
+
+	carrousel = Carrousel(size=(512,512), item_size=(128,128))
 	stage.add(carrousel)
 	n_items = len(item_images)
 	items = []
 	stage.show()
 	for image in item_images:
 		carrousel.add(clutter.Texture(image))
-	carrousel.set_position(512, 200)
+	carrousel.set_position(400, 200)
 	stage.connect('key-press-event', on_input, carrousel, item_images)
 	clutter.main()
 
 if __name__ == '__main__':
-	main("./images")
-
+	import sys
+	if len(sys.argv[1:]):
+		main(sys.argv[1])
+	else:
+		main("./images")
 
