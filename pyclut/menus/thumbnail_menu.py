@@ -1,27 +1,14 @@
 ﻿import clutter
-from widget.reflect import ReflectedItem
-from widget.animation import MoveAnimation, RotateAnimation, ScaleAnimation, DepthAnimation
-from widget.utils import clamp_angle
+from pyclut.animation import DepthAnimation
+from pyclut.utils import clamp_angle
 
-
-# class ThumbnailItemAnimation(MoveAnimation, OpacityAnimation, DepthAnimation):
-# 	def __init__(self, destination, opacity, depth, duration, style, timeline=None, alpha=None):
-# 		MoveAnimation.__init__(self, destination, duration, style, timeline=timeline, alpha=alpha)
-# 		OpacityAnimation.__init__(self, opacity, duration, style, timeline=self._timeline, alpha=self._alpha)
-# 		DepthAnimation.__init__(self, depth, duration, style, timeline=self._timeline, alpha=self._alpha)
-#
-# 	def do_prepare_animation(self):
-# 		behaviours = MoveAnimation.do_prepare_animation(self)
-# 		behaviours.extend(OpacityAnimation.do_prepare_animation(self))
-# 		behaviours.extend(DepthAnimation.do_prepare_animation(self))
-# 		return behaviours
 
 class PageFullError(Exception):
 	pass
 
 class ThumbnailPage(clutter.Group):
 	__gtype_name__ = 'ThumbnailPage'
-	def __init__(self, size=(512, 512), max_row=2, max_column=2, selection_depth=150, item_size=(128, 128), inter_item_space=10):
+	def __init__(self, size=(512, 512), max_row=2, max_column=2, selection_depth=75, item_size=(128, 128), inter_item_space=10):
 		clutter.Group.__init__(self)
 		self._max_item = max_row * max_column
 		self._max_row = max_row
@@ -62,7 +49,6 @@ class ThumbnailPage(clutter.Group):
 	def _select_item(self, selected):
 		self._selected = selected
 		if selected >=0:
-			print "select", selected
 			anim = DepthAnimation(self._selection_depth, duration=200, style=clutter.LINEAR)
 			anim.apply(self._children[selected])
 			anim.start()
@@ -72,7 +58,6 @@ class ThumbnailPage(clutter.Group):
 		for i,item in enumerate(self._children):
 			if i != selected:
 				anim = DepthAnimation(0, duration=200, style=clutter.LINEAR)
-				print "unselect", i
 				anim.apply(item)
 				anims.append(anim)
 		[anim.start() for anim in anims]

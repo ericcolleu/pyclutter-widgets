@@ -1,6 +1,6 @@
 import clutter
 import gobject
-from widget.utils import clamp_angle
+from pyclut.utils import clamp_angle
 
 class Animation(clutter.Behaviour):
 	__gtype_name__ = 'Animation'

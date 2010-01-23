@@ -1,7 +1,7 @@
 import clutter
-from widget.reflect import ReflectedItem
-from widget.animation import MoveAnimation, RotateAnimation, ScaleAnimation, DepthAnimation
-from widget.utils import clamp_angle
+from pyclut.effects.reflect import ReflectedItem
+from pyclut.animation import MoveAnimation, RotateAnimation, ScaleAnimation, DepthAnimation
+from pyclut.utils import clamp_angle
 
 
 class CoverflowItemAnimation(MoveAnimation, RotateAnimation, ScaleAnimation, DepthAnimation):
@@ -33,6 +33,7 @@ class Coverflow(clutter.Group):
 		self._angle = angle
 		self._selection_depth = selection_depth
 		self._children = []
+		self.set_reactive(True)
 		if children:
 			self.add(*children)
 
@@ -64,7 +65,7 @@ class Coverflow(clutter.Group):
 			direction=direction,
 			scale=1.0,
 			depth=depth,
-			duration=200,
+			duration=100,
 			style=clutter.EASE_IN_OUT_SINE
 		)
 		anim.apply(item)
@@ -96,15 +97,23 @@ class Coverflow(clutter.Group):
 					angle=360-self._angle,
 					direction=clutter.ROTATE_CCW,
 					depth=0.0))
+		anims[-1].connect("completed", self._on_anim_completed)
 		[anim.start() for anim in anims]
 
+	def _on_anim_completed(self, event):
+		self.set_reactive(True)
+		
 	def next(self):
-		self._selected = min(self._selected + 1,len(self._children)-1)# % len(self._children)
-		self.__update_items_position(clutter.ROTATE_CW)
+		if self.get_reactive():
+			self.set_reactive(False)
+			self._selected = min(self._selected + 1,len(self._children)-1)# % len(self._children)
+			self.__update_items_position(clutter.ROTATE_CW)
 
 	def previous(self):
-		self._selected = max(self._selected - 1, 0)# % len(self._children)
-		self.__update_items_position(clutter.ROTATE_CCW)
+		if self.get_reactive():
+			self.set_reactive(False)
+			self._selected = max(self._selected - 1, 0)# % len(self._children)
+			self.__update_items_position(clutter.ROTATE_CCW)
 
 	def get_selected(self):
 		return self._selected

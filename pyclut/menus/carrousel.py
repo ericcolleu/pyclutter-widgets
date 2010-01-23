@@ -12,7 +12,7 @@ class Carrousel(clutter.Group):
 		self._children = []
 		self._step = 0
 		self._tilt = (300.0, 360.0, 360.0)
-		self._timeline = clutter.Timeline(duration=500)
+		self._timeline = clutter.Timeline(duration=100)
 		self._timeline.connect('completed', self.anim_completed)
 		self._alpha = clutter.Alpha(self._timeline, clutter.LINEAR)
 		if children:
@@ -73,7 +73,6 @@ class Carrousel(clutter.Group):
 
 	def anim_completed(self, timeline):
 		self.set_reactive(True)
-		print "anim_completed"
 
 	def turn_item_right(self, item):
 		item.ellipse.set_direction(clutter.ROTATE_CW)
@@ -88,14 +87,18 @@ class Carrousel(clutter.Group):
 		item.ellipse.set_angle_end(item.angle)
 
 	def next(self):
-		for child in self._children:
-			self.turn_item_right(child)
-		self._timeline.start()
+		if self.get_reactive():
+			self.set_reactive(False)
+			for child in self._children:
+				self.turn_item_right(child)
+			self._timeline.start()
 
 	def previous(self):
-		for child in self._children:
-			self.turn_item_left(child)
-		self._timeline.start()
+		if self.get_reactive():
+			self.set_reactive(False)
+			for child in self._children:
+				self.turn_item_left(child)
+			self._timeline.start()
 
 
 

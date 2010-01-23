@@ -5,7 +5,7 @@ import clutter
 import glob, time
 import os.path
 from clutter import keysyms
-from widget.carrousel import Carrousel
+from pyclut.menus.carrousel import Carrousel
 global current
 current=1
 

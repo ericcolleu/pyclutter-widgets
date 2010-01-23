@@ -5,7 +5,7 @@ import clutter
 import glob, time
 import os.path
 from clutter import keysyms
-from widget.thumbnail_menu import ThumbnailMenu
+from pyclut.menus.thumbnail_menu import ThumbnailMenu
 global current
 current=1
 

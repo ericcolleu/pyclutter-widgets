@@ -1,6 +1,6 @@
 ﻿import clutter
 import gobject
-from widget.animation import Animator
+from pyclut.animation import Animator
 
 class Button(clutter.Group):
 	__gtype_name__ = 'Button'

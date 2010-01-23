@@ -5,7 +5,7 @@ import clutter
 import glob, time
 import os.path
 from clutter import keysyms
-from widget.coverflow import Coverflow
+from pyclut.menus.coverflow import Coverflow
 global current
 current=1
 

@@ -5,7 +5,7 @@ import clutter
 import glob, time
 import os.path
 from clutter import keysyms
-from widget.button import Button
+from pyclut.controls.button import Button
 
 def on_input(stage, event):
 	if event.keyval == keysyms.q:
