@@ -77,12 +77,14 @@ class ThumbnailPage(clutter.Group):
 		
 class ThumbnailMenu(clutter.Group):
 	__gtype_name__ = 'ThumbnailMenu'
-	def __init__(self, x=0, y=0, size=(512, 128), item_size=(128, 128), nb_item_by_page=4, selection_depth=200, *children):
+	def __init__(self, x=0, y=0, size=(512, 128), item_size=(128, 128), row=2, column=2, selection_depth=200, *children):
 		clutter.Group.__init__(self)
 		self._x = x
 		self._y = y
 		self._selected = 0
-		self._current_page = ThumbnailPage(size, nb_item_by_page, selection_depth, item_size)
+		self._args = size, row, column, selection_depth, item_size
+		self._item_by_page = row * column
+		self._current_page = ThumbnailPage(*self._args)
 		self._pages.append(self._current_page)
 		clutter.Group.add(self, self._current_page)
 		self._nb_children=0
@@ -95,7 +97,7 @@ class ThumbnailMenu(clutter.Group):
 				self._nb_children+=1
 				self._current_page.add(child)
 			except PageFullError:
-				self._current_page = ThumbnailPage()
+				self._current_page = ThumbnailPage(*self._args)
 				self._pages.append(self._current_page)
 				clutter.Group.add(self, self._current_page)
 				self._current_page.add(child)
@@ -115,16 +117,26 @@ class ThumbnailMenu(clutter.Group):
 		return self._children[page_num*self._nb_item_by_page:min((page_num+1)*self._nb_item_by_page, len(self._children))]
 
 	def __update(self):
-		pass
+		for i,page in enumerate(self._pages):
+			if page != self._current_page:
+				page.hide()
+			else:
+				current_page_index = i
+		self._current_page.select(self._selected-((current_page_index-1)*self._item_by_page))
 
 	def next(self):
 		self._selected = min(self._selected + 1,len(self._children)-1)# % len(self._children)
-		self.__update_items_position()
+		self.__update()
 
 	def previous(self):
 		self._selected = max(self._selected - 1, 0)# % len(self._children)
-		self.__update_items_position()
+		self.__update()
 
+	def next_page(self):
+		pass
+	
+	def previous_page(self):
+		pass
 
 
 
