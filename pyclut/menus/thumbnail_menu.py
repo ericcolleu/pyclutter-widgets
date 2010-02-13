@@ -47,12 +47,15 @@ class ThumbnailPage(clutter.Group):
 		self.select(self._selected)
 			
 	def _select_item(self, selected):
-		self._selected = selected
-		if selected >=0:
-			anim = DepthAnimation(self._selection_depth, duration=200, style=clutter.LINEAR)
-			anim.apply(self._children[selected])
-			anim.start()
-		
+		try:
+			self._selected = selected
+			if selected >=0:
+				anim = DepthAnimation(self._selection_depth, duration=200, style=clutter.LINEAR)
+				anim.apply(self._children[selected])
+				anim.start()
+		except IndexError:
+			self._selected = 0
+			
 	def _unselect_items(self, selected):
 		anims=[]
 		for i,item in enumerate(self._children):
@@ -65,7 +68,13 @@ class ThumbnailPage(clutter.Group):
 	def select(self, index_):
 		self._select_item(index_)
 		self._unselect_items(index_)
-		
+
+	def next(self):
+		self.select((self._selected + 1)%len(self._children))
+
+	def previous(self):
+		self.select((self._selected - 1)%len(self._children))
+
 	def is_empty(self):
 		return (len(self._children) == 0)
 		
@@ -85,58 +94,45 @@ class ThumbnailMenu(clutter.Group):
 		self._args = size, row, column, selection_depth, item_size
 		self._item_by_page = row * column
 		self._current_page = ThumbnailPage(*self._args)
-		self._pages.append(self._current_page)
+		self._current_page.show()
+		self._current_page_index = 0
+		self._pages = [self._current_page, ]
 		clutter.Group.add(self, self._current_page)
 		self._nb_children=0
 		if children:
 			self.add(*children)
 
 	def add(self, *children):
+		last_page = self._pages[-1]
 		for child in children:
 			try:
-				self._nb_children+=1
-				self._current_page.add(child)
+				last_page.add(child)
 			except PageFullError:
-				self._current_page = ThumbnailPage(*self._args)
-				self._pages.append(self._current_page)
-				clutter.Group.add(self, self._current_page)
-				self._current_page.add(child)
-		self.__update()
-
-	def remove(self, *children):
-		clutter.Group.remove(self, *children)
-		self.do_remove(*children)
-
-	def do_remove(self, *children):
-		for child in children:
-			self._nb_children-=1
-		self.__update()
-
-	def __get_items_in_current_page(self):
-		page_num = int(self._selected / self._nb_item_by_page)
-		return self._children[page_num*self._nb_item_by_page:min((page_num+1)*self._nb_item_by_page, len(self._children))]
-
-	def __update(self):
-		for i,page in enumerate(self._pages):
-			if page != self._current_page:
-				page.hide()
-			else:
-				current_page_index = i
-		self._current_page.select(self._selected-((current_page_index-1)*self._item_by_page))
+				last_page = ThumbnailPage(*self._args)
+				last_page.hide()
+				self._pages.append(last_page)
+				clutter.Group.add(self, last_page)
+				last_page.add(child)
 
 	def next(self):
-		self._selected = min(self._selected + 1,len(self._children)-1)# % len(self._children)
-		self.__update()
+		self._current_page.next()
 
 	def previous(self):
-		self._selected = max(self._selected - 1, 0)# % len(self._children)
-		self.__update()
+		self._current_page.previous()
 
 	def next_page(self):
-		pass
+		self._current_page_index = (self._current_page_index + 1) % len(self._pages)
+		next_page = self._pages[self._current_page_index]
+		next_page.show()
+		self._current_page.hide()
+		self._current_page = next_page
 	
 	def previous_page(self):
-		pass
+		self._current_page_index = (self._current_page_index - 1) % len(self._pages)
+		previous_page = self._pages[self._current_page_index]
+		previous_page.show()
+		self._current_page.hide()
+		self._current_page = previous_page
 
 
 

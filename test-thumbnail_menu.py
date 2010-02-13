@@ -32,14 +32,14 @@ def main(image_directory):
 	stage.set_color(clutter.Color(0, 0, 0, 255))
 	stage.set_title('Thumbnail Menu')
 	item_images = glob.glob(os.path.join(image_directory, "*.png"))
-	thumbnailmenu = ThumbnailMenu(size=(1024, 512), item_size=(128,128), nb_item_by_page=4)
+	thumbnailmenu = ThumbnailMenu(size=(512, 512), item_size=(128,128))
 	stage.add(thumbnailmenu)
 	n_items = len(item_images)
 	items = []
 	stage.show()
 	for image in item_images:
 		thumbnailmenu.add(clutter.Texture(image))
-	thumbnailmenu.set_position(400, 200)
+	thumbnailmenu.set_position(0, 0)
 	stage.connect('key-press-event', on_input, thumbnailmenu, item_images)
 	clutter.main()
 
