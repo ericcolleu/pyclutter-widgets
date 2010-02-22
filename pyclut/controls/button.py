@@ -2,15 +2,16 @@
 import gobject
 from pyclut.animation import Animator
 
-class Button(clutter.Group):
-	__gtype_name__ = 'Button'
+class ImageButton(clutter.Group):
+	__gtype_name__ = 'ImageButton'
 	__gsignals__ = {
-		'pressed' : ( gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, () ),
-		'released' : ( gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, () ),
+		'pressed' : ( gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,) ),
+		'released' : ( gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,) ),
 	}
 
-	def __init__(self, released_background, pressed_background):
+	def __init__(self, released_background, pressed_background, value=None):
 		clutter.Group.__init__(self)
+		self._value = value
 		self._pressed_background = pressed_background
 		self._pressed_background.set_opacity(0)
 		self._released_background = released_background
@@ -39,10 +40,19 @@ class Button(clutter.Group):
 	def _on_pressed(self, background, event):
 		if event.button == 1:
 			self._show_pressed()
-			self.emit("pressed")
+			self.emit("pressed", self._value)
 
 	def _on_released(self, background, event):
 		if event.button == 1:
 			self._show_released()
-			self.emit("released")
+			self.emit("released", self._value)
+
+
+class TextButton(ImageButton):
+	__gtype_name__ = 'TextButton'
+	def __init__(self, text, released_background, pressed_background, value=None):
+		ImageButton.__init__(self, released_background, pressed_background, value)
+		self.text = clutter.Text(text)
+		self.add(self.text)
+
 
