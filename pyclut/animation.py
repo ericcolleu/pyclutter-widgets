@@ -20,11 +20,11 @@ class Animation(clutter.Behaviour):
 
 	def do_prepare_animation(self):
 		return []
-	
+
 	def _on_done(self, timeline):
 		[behaviour.remove_all() for behaviour in self._behaviours]
 		self.emit("completed")
-		
+
 	def prepare(self):
 		self._behaviours = self.do_prepare_animation()
 
@@ -45,8 +45,9 @@ class MoveAnimation(Animation):
 	def do_prepare_animation(self):
 		start_x, start_y = self._actor.get_position()
 		path = clutter.Path("M %s %s L %s %s" % (start_x, start_y, self._destination[0], self._destination[1]))
-		return [clutter.BehaviourPath(alpha=self._alpha, path=path),]
-		
+		behaviours = [clutter.BehaviourPath(alpha=self._alpha, path=path),]
+		return behaviours
+
 class RotateAnimation(Animation):
 	def __init__(self, angle, axis, direction, duration, style, timeline=None, alpha=None):
 		Animation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
@@ -56,10 +57,10 @@ class RotateAnimation(Animation):
 
 	def do_prepare_animation(self):
 		return [clutter.BehaviourRotate(
-			axis=self._axis, 
-			angle_start=clamp_angle(self._actor.get_rotation(self._axis)[0]), 
-			angle_end=clamp_angle(self._angle), 
-			alpha=self._alpha, 
+			axis=self._axis,
+			angle_start=clamp_angle(self._actor.get_rotation(self._axis)[0]),
+			angle_end=clamp_angle(self._angle),
+			alpha=self._alpha,
 			direction=self._direction),]
 
 class MoveAndRotateAnimation(MoveAnimation, RotateAnimation):
@@ -71,7 +72,7 @@ class MoveAndRotateAnimation(MoveAnimation, RotateAnimation):
 		behaviours = [MoveAnimation.do_prepare_animation(self),]
 		behaviours += [RotateAnimation.do_prepare_animation(self),]
 		return behaviours
-		
+
 class ScaleAnimation(Animation):
 	def __init__(self, scale_x, scale_y, duration, style, timeline=None, alpha=None):
 		Animation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
@@ -81,10 +82,10 @@ class ScaleAnimation(Animation):
 	def do_prepare_animation(self):
 		(cur_scale_x, cur_scale_y) = self._actor.get_scale()
 		return [clutter.BehaviourScale(
-			x_scale_start=cur_scale_x, 
-			y_scale_start=cur_scale_y, 
-			x_scale_end=self._scale_x, 
-			y_scale_end=self._scale_y, 
+			x_scale_start=cur_scale_x,
+			y_scale_start=cur_scale_y,
+			x_scale_end=self._scale_x,
+			y_scale_end=self._scale_y,
 			alpha=self._alpha),]
 
 class OpacityAnimation(Animation):
@@ -94,8 +95,8 @@ class OpacityAnimation(Animation):
 
 	def do_prepare_animation(self):
 		return [clutter.BehaviourOpacity(
-			opacity_start=self._actor.get_opacity(), 
-			opacity_end=self._opacity, 
+			opacity_start=self._actor.get_opacity(),
+			opacity_end=self._opacity,
 			alpha=self._alpha),]
 
 class TurnAroundAnimation(Animation):
@@ -113,7 +114,7 @@ class TurnAroundAnimation(Animation):
 			y=self._center[1],
 			width=self._radius*2,
 			height=self._radius*2,
-			start=360, 
+			start=360,
 			end=self._angle)
 		behaviour.set_tilt(*self._tilt)
 		return [behaviour,]
@@ -148,41 +149,41 @@ class Animator(object):
 
 	def createRotateAnimation(self, angle, axis=clutter.Y_AXIS, direction=clutter.ROTATE_CW, duration_ms=None, style=None):
 		return RotateAnimation(
-			angle, 
-			axis, 
+			angle,
+			axis,
 			direction,
 			duration_ms or self._default_duration,
 			style or self._default_style,
 		)
-		
+
 	def createScaleAnimation(self, scale_x, scale_y, duration_ms=None, style=None):
 		return ScaleAnimation(
-			scale_x, 
-			scale_y, 
+			scale_x,
+			scale_y,
 			duration_ms or self._default_duration,
 			style or self._default_style,
 		)
 
 	def createOpacityAnimation(self, opacity, duration_ms=None, style=None, *actors):
 		return OpacityAnimation(
-			opacity, 
+			opacity,
 			duration_ms or self._default_duration,
 			style or self._default_style,
 		)
 
 	def createMoveAndRotateAnimation(self, destination, angle, axis, direction, duration_ms=None, style=None):
 		return MoveAndRotateAnimation(
-			destination, 
-			angle, 
-			axis, 
+			destination,
+			angle,
+			axis,
 			direction,
 			duration_ms or self._default_duration,
 			style or self._default_style,
 		)
-		
+
 	def createDepthAnimation(self, depth, duration_ms=None, style=None):
 		return DepthAnimation(
-			depth, 
+			depth,
 			duration_ms or self._default_duration,
 			style or self._default_style,
 		)
@@ -202,4 +203,4 @@ class Animator(object):
 		self._memoize_behaviour(behavior, timeline)
 		return (behavior, timeline)
 
-		
+
