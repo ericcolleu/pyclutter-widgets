@@ -1,4 +1,17 @@
 import clutter
+from pyclut.animation import ScaleAnimation, DepthAnimation, TurnAroundAnimation
+
+class CarrouselItemAnimation(ScaleAnimation, DepthAnimation, TurnAroundAnimation):
+	def __init__(self, center, radius, angle, tilt, scale, depth, duration, style, timeline=None, alpha=None):
+		ScaleAnimation.__init__(self, scale, scale, duration, style, timeline=timeline, alpha=alpha)
+		DepthAnimation.__init__(self, depth, duration, style, timeline=self._timeline, alpha=self._alpha)
+		TurnAroundAnimation.__init__(self, center, radius, angle, tilt, duration, style, timeline=self._timeline, alpha=self._alpha)
+
+	def do_prepare_animation(self):
+		behaviours = ScaleAnimation.do_prepare_animation(self)
+		behaviours.extend(DepthAnimation.do_prepare_animation(self))
+		behaviours.extend(TurnAroundAnimation.do_prepare_animation(self))
+		return behaviours
 
 class Carrousel(clutter.Group):
 	__gtype_name__ = 'Carrousel'
@@ -15,6 +28,10 @@ class Carrousel(clutter.Group):
 		self._timeline = clutter.Timeline(duration=100)
 		self._timeline.connect('completed', self.anim_completed)
 		self._alpha = clutter.Alpha(self._timeline, clutter.LINEAR)
+		self._selected_scale = 1.2
+		self._unselected_scale = 1.0
+		self._selected_depth = 100
+		self._unselected_depth = 0
 		if children:
 			self.add(*children)
 
@@ -34,11 +51,14 @@ class Carrousel(clutter.Group):
 			angle, angle)
 		item.ellipse.set_tilt(*self._tilt)
 		item.ellipse.apply(item)
-		if angle == 360:
-			scale = clutter.BehaviourScale(1.0, 1.0, 1.0, 1.0, self._alpha)
+		if angle == 90:
+			item.scale = clutter.BehaviourScale(1.0, 1.0, self._selected_scale, self._selected_scale, self._alpha)
+			item.depth = clutter.BehaviourDepth(item.get_depth(), self._selected_depth, self._alpha)
 		else:
-			scale = clutter.BehaviourScale(1.0, 1.0, 0.6, 0.6, self._alpha)
-		scale.apply(item)
+			item.scale = clutter.BehaviourScale(1.0, 1.0, self._unselected_scale, self._unselected_scale, self._alpha)
+			item.depth = clutter.BehaviourDepth(item.get_depth(), self._unselected_depth, alpha=self._alpha)
+		item.scale.apply(item)
+		item.depth.apply(item)
 		item.angle = angle
 		self._timeline.start()
 
@@ -79,12 +99,28 @@ class Carrousel(clutter.Group):
 		item.ellipse.set_angle_start(item.angle)
 		item.angle = (item.angle + self._step) % 360
 		item.ellipse.set_angle_end(item.angle)
+		x_start, y_start, x_end, y_end = item.scale.get_bounds()
+		depth_start, depth_end = item.depth.get_bounds()
+		if item.angle == 90:
+			item.scale.set_bounds(x_end, y_end, self._selected_scale, self._selected_scale)
+			item.depth.set_bounds(depth_end, self._selected_depth)
+		else:
+			item.scale.set_bounds(x_end, y_end, self._unselected_scale, self._unselected_scale)
+			item.depth.set_bounds(depth_end, self._unselected_depth)
 
 	def turn_item_left(self, item):
 		item.ellipse.set_direction(clutter.ROTATE_CCW)
 		item.ellipse.set_angle_start(item.angle)
 		item.angle = (item.angle - self._step) % 360
 		item.ellipse.set_angle_end(item.angle)
+		x_start, y_start, x_end, y_end = item.scale.get_bounds()
+		depth_start, depth_end = item.depth.get_bounds()
+		if item.angle == 90:
+			item.scale.set_bounds(x_end, y_end, self._selected_scale, self._selected_scale)
+			item.depth.set_bounds(depth_end, self._selected_depth)
+		else:
+			item.scale.set_bounds(x_end, y_end, self._unselected_scale, self._unselected_scale)
+			item.depth.set_bounds(depth_end, self._unselected_depth)
 
 	def next(self):
 		if self.get_reactive():

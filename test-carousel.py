@@ -42,7 +42,10 @@ def main(image_directory):
 	stage.show()
 	for image in item_images:
 		carrousel.add(clutter.Texture(image))
-	carrousel.set_position(400, 200)
+	carrousel.set_position(
+		stage.get_size()[0]/2-carrousel.get_size()[0]/2,
+		stage.get_size()[1]/2-carrousel.get_size()[1]/2
+	)
 	stage.connect('key-press-event', on_input, carrousel, item_images)
 	clutter.main()
 
