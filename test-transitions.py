@@ -13,26 +13,29 @@ from pyclut.menus.thumbnail_menu import ThumbnailMenu
 
 
 class TransitionTest(PyClutTest):
-	def __init__(self, transition_name, *args, **kwargs):
+	def __init__(self, transition_names, *args, **kwargs):
 		PyClutTest.__init__(self, *args, **kwargs)
 		self._menu = 0
-		self._transition_name = transition_name
+		self._transition_names = transition_names
 		self._transitions = {
 			"Slide" : (SlideTransition, {"zone_object" : self._stage,}),
 			"Rotate" : (RotateTransition, {"direction" : clutter.ROTATE_CW, "axis" : clutter.Z_AXIS},),
 			"Zoom" : (ZoomTransition, {},),
 		}
 
-	def _get_transition(self, actor_in, actor_out):
-		transition_class, transition_kwargs = self._transitions[self._transition_name]
+	def _get_transition(self, transition_name, actor_in, actor_out):
+		transition_class, transition_kwargs = self._transitions[transition_name]
 		return transition_class(actor_in=actor_in, actor_out=actor_out, duration=500, **transition_kwargs)
 
 	def _on_item_clicked(self, item, event):
 		out_menu = self._menus[self._menu]
 		self._menu = (self._menu + 1)%len(self._menus)
 		in_menu = self._menus[self._menu]
-		transition = self._get_transition(in_menu, out_menu)
-		transition.start()
+		transitions = [self._get_transition(transition_name, in_menu, out_menu) for transition_name in self._transition_names]
+		[transition.start() for transition in transitions]
+
+		#transition = self._get_transition(self._transition_name, in_menu, out_menu)
+		#transition.start()
 
 	def _create_item(self, image):
 		item = clutter.Texture(image)
@@ -65,7 +68,7 @@ class TransitionTest(PyClutTest):
 if __name__ == '__main__':
 	import sys
 	if len(sys.argv[1:]):
-		test = TransitionTest(sys.argv[1])
+		test = TransitionTest(sys.argv[1:])
 	else:
 		test = TransitionTest("Slide")
 	test.run()
