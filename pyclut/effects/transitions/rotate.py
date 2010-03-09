@@ -13,8 +13,9 @@ class RotateAndFadeAnimation(RotateAnimation, OpacityAnimation):
 		return behaviours
 
 class RotateTransition(Transition):
-	def __init__(self, actor_in, actor_out, duration=500, style=clutter.LINEAR):
+	def __init__(self, actor_in, actor_out, direction=clutter.ROTATE_CW, duration=500, style=clutter.LINEAR):
 		Transition.__init__(self, actor_out, actor_in, actor_out, final_position=actor_out.get_position(), duration=duration, style=style)
+		self._direction = direction
 		self._duration = duration
 		self._style = style
 
@@ -35,8 +36,8 @@ class RotateTransition(Transition):
 
 	def create_animations(self):
 		self._actor_in.show()
-		anim_in = RotateAndFadeAnimation(0, clutter.Y_AXIS, clutter.ROTATE_CW, 255, self._duration, self._style)
-		anim_out = RotateAndFadeAnimation(-180, clutter.Y_AXIS, clutter.ROTATE_CW, 0, self._duration, self._style)
+		anim_in = RotateAndFadeAnimation(0, clutter.Y_AXIS, self._direction, 255, self._duration, self._style)
+		anim_out = RotateAndFadeAnimation(-180, clutter.Y_AXIS, self._direction, 0, self._duration, self._style)
 		return anim_in, anim_out
 
 
