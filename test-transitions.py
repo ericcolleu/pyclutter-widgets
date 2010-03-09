@@ -5,25 +5,31 @@ import clutter
 from test import PyClutTest
 from pyclut.effects.transitions import TransitionZone
 from pyclut.effects.transitions.slide import SlideTransition
+from pyclut.effects.transitions.rotate import RotateTransition
 from pyclut.menus.carrousel import Carrousel
 from pyclut.menus.coverflow import Coverflow
 from pyclut.menus.thumbnail_menu import ThumbnailMenu
 
 
 class TransitionTest(PyClutTest):
-	transitions = {
-		"Slide" : SlideTransition,
-	}
 	def __init__(self, transition_name, *args, **kwargs):
 		PyClutTest.__init__(self, *args, **kwargs)
 		self._menu = 0
-		self._transition_class = self.transitions[transition_name]
+		self._transition_name = transition_name
+		self._transitions = {
+			"Slide" : (SlideTransition, {"zone_object":self._stage,}),
+			"Rotate" : (RotateTransition, {},),
+		}
+
+	def _get_transition(self, actor_in, actor_out):
+		transition_class, transition_kwargs = self._transitions[self._transition_name]
+		return transition_class(actor_in=actor_in, actor_out=actor_out, duration=500, **transition_kwargs)
 
 	def _on_item_clicked(self, item, event):
 		out_menu = self._menus[self._menu]
 		self._menu = (self._menu + 1)%len(self._menus)
 		in_menu = self._menus[self._menu]
-		transition = self._transition_class(actor_in=in_menu, actor_out=out_menu, zone_object=self._stage, duration=500)
+		transition = self._get_transition(in_menu, out_menu)
 		transition.start()
 
 	def _create_item(self, image):
@@ -55,7 +61,11 @@ class TransitionTest(PyClutTest):
 		clutter.main()
 
 if __name__ == '__main__':
-	test = TransitionTest("Slide")
+	import sys
+	if len(sys.argv[1:]):
+		test = TransitionTest(sys.argv[1])
+	else:
+		test = TransitionTest("Slide")
 	test.run()
 
 
