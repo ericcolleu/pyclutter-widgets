@@ -69,8 +69,8 @@ class MoveAndRotateAnimation(MoveAnimation, RotateAnimation):
 		RotateAnimation.__init__(self, angle, axis, direction, duration, style, timeline=self._timeline, alpha=self._alpha)
 
 	def do_prepare_animation(self):
-		behaviours = [MoveAnimation.do_prepare_animation(self),]
-		behaviours += [RotateAnimation.do_prepare_animation(self),]
+		behaviours = MoveAnimation.do_prepare_animation(self)
+		behaviours.extend(RotateAnimation.do_prepare_animation(self))
 		return behaviours
 
 class ScaleAnimation(Animation):

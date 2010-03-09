@@ -1,53 +1,55 @@
 ﻿#!/usr/bin/python
 
 import clutter
-
-import glob, time
-import os.path
+from test import PyClutTest
 from clutter import keysyms
 from pyclut.menus.thumbnail_menu import ThumbnailMenu
-global current
-current=1
 
-def on_input(stage, event, thumbnailmenu, item_images):
-	global current
-	if event.keyval == keysyms.Left:
-		thumbnailmenu.previous()
-	elif event.keyval == keysyms.Right:
-		thumbnailmenu.next()
-	elif event.keyval == keysyms.Page_Down:
-		thumbnailmenu.previous_page()
-	elif event.keyval == keysyms.Page_Up:
-		thumbnailmenu.next_page()
-	elif event.keyval == keysyms.a:
-		thumbnailmenu.add(clutter.Texture(item_images[current]))
-		current = (current + 1) % len(item_images)
-	elif event.keyval == keysyms.q:
-		clutter.main_quit()
+class ThumbnailMenuTest(PyClutTest):
+	def __init__(self, *args, **kwargs):
+		PyClutTest.__init__(self, *args, **kwargs)
 
-def main(image_directory):
-	stage = clutter.Stage()
-	stage.set_size(1024,768)
-	stage.connect('destroy', clutter.main_quit)
-	stage.set_color(clutter.Color(0, 0, 0, 255))
-	stage.set_title('Thumbnail Menu')
-	item_images = glob.glob(os.path.join(image_directory, "*.png"))
-	thumbnailmenu = ThumbnailMenu(size=(512, 512), item_size=(128,128))
-	stage.add(thumbnailmenu)
-	n_items = len(item_images)
-	items = []
-	stage.show()
-	for image in item_images:
-		thumbnailmenu.add(clutter.Texture(image))
-	thumbnailmenu.set_position(0, 0)
-	stage.connect('key-press-event', on_input, thumbnailmenu, item_images)
-	clutter.main()
+	def impl_on_input(self, stage, event):
+		if event.keyval == keysyms.Left:
+			self.thumbnailmenu.previous()
+		elif event.keyval == keysyms.Right:
+			self.thumbnailmenu.next()
+		elif event.keyval == keysyms.Page_Down:
+			self.thumbnailmenu.previous_page()
+		elif event.keyval == keysyms.Page_Up:
+			self.thumbnailmenu.next_page()
+		elif event.keyval == keysyms.a:
+			self.thumbnailmenu.add(clutter.Texture(self.get_image()))
+
+	def run(self):
+		nb_row = 4
+		nb_column = 4
+		item_size = 128
+		inter_item = 10
+		self.thumbnailmenu = ThumbnailMenu(
+			size=(nb_column*(item_size+inter_item), nb_row*(item_size+inter_item)),
+			item_size=(item_size, item_size),
+			row=nb_row,
+			column=nb_column,
+			inter_item_space=inter_item,
+		)
+		self._stage.add(self.thumbnailmenu)
+		self._stage.show()
+		for rank in range(20):
+			image = self.get_image()
+			self.thumbnailmenu.add(clutter.Texture(image))
+		self.thumbnailmenu.set_position(
+			self._stage_center[0]-self.thumbnailmenu.get_size()[0]/2,
+			self._stage_center[1]-self.thumbnailmenu.get_size()[1]/2
+		)
+		clutter.main()
 
 if __name__ == '__main__':
 	import sys
 	if len(sys.argv[1:]):
-		main(sys.argv[1])
+		test = ThumbnailMenuTest(image_directory=sys.argv[1])
 	else:
-		main("./images")
+		test = ThumbnailMenuTest()
+	test.run()
 
 

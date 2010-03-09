@@ -1,6 +1,8 @@
 ﻿import clutter
 from pyclut.animation import DepthAnimation
 from pyclut.utils import clamp_angle
+from pyclut.effects.transitions.slide import SlideTransition
+from pyclut.effects.transitions import Direction
 
 
 class PageFullError(Exception):
@@ -45,7 +47,7 @@ class ThumbnailPage(clutter.Group):
 		except IndexError:
 			pass
 		self.select(self._selected)
-			
+
 	def _select_item(self, selected):
 		try:
 			self._selected = selected
@@ -55,7 +57,7 @@ class ThumbnailPage(clutter.Group):
 				anim.start()
 		except IndexError:
 			self._selected = 0
-			
+
 	def _unselect_items(self, selected):
 		anims=[]
 		for i,item in enumerate(self._children):
@@ -64,7 +66,7 @@ class ThumbnailPage(clutter.Group):
 				anim.apply(item)
 				anims.append(anim)
 		[anim.start() for anim in anims]
-		
+
 	def select(self, index_):
 		self._select_item(index_)
 		self._unselect_items(index_)
@@ -77,21 +79,21 @@ class ThumbnailPage(clutter.Group):
 
 	def is_empty(self):
 		return (len(self._children) == 0)
-		
+
 	def is_full(self):
 		return (len(self._children) >= self._max_item)
 
 	def get_selected(self):
 		return self._selected
-		
+
 class ThumbnailMenu(clutter.Group):
 	__gtype_name__ = 'ThumbnailMenu'
-	def __init__(self, x=0, y=0, size=(512, 128), item_size=(128, 128), row=2, column=2, selection_depth=200, *children):
+	def __init__(self, x=0, y=0, size=(512, 128), item_size=(128, 128), row=2, column=2, selection_depth=200, inter_item_space=10, *children):
 		clutter.Group.__init__(self)
 		self._x = x
 		self._y = y
 		self._selected = 0
-		self._args = size, row, column, selection_depth, item_size
+		self._args = size, row, column, selection_depth, item_size, inter_item_space
 		self._item_by_page = row * column
 		self._current_page = ThumbnailPage(*self._args)
 		self._current_page.show()
@@ -123,17 +125,32 @@ class ThumbnailMenu(clutter.Group):
 	def next_page(self):
 		self._current_page_index = (self._current_page_index + 1) % len(self._pages)
 		next_page = self._pages[self._current_page_index]
-		next_page.show()
-		self._current_page.hide()
+		self._current_page.select(-1)
+		transition = SlideTransition(
+			next_page,
+			self._current_page,
+			self,
+			in_direction=Direction.LEFT,
+			out_direction=Direction.LEFT,
+			final_position=(self._x, self._y),
+		)
 		self._current_page = next_page
-	
+		transition.start()
+
 	def previous_page(self):
 		self._current_page_index = (self._current_page_index - 1) % len(self._pages)
 		previous_page = self._pages[self._current_page_index]
-		previous_page.show()
-		self._current_page.hide()
+		self._current_page.select(-1)
+		transition = SlideTransition(
+			previous_page,
+			self._current_page,
+			self,
+			in_direction=Direction.RIGHT,
+			out_direction=Direction.RIGHT,
+			final_position=(self._x, self._y),
+		)
 		self._current_page = previous_page
-
+		transition.start()
 
 
 
