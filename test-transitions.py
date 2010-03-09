@@ -18,7 +18,7 @@ class TransitionTest(PyClutTest):
 		self._transition_name = transition_name
 		self._transitions = {
 			"Slide" : (SlideTransition, {"zone_object" : self._stage,}),
-			"Rotate" : (RotateTransition, {"direction" : clutter.ROTATE_CW,},),
+			"Rotate" : (RotateTransition, {"direction" : clutter.ROTATE_CW, "axis" : clutter.Z_AXIS},),
 		}
 
 	def _get_transition(self, actor_in, actor_out):
