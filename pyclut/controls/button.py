@@ -1,6 +1,7 @@
 ﻿import clutter
 import gobject
 from pyclut.animation import Animator
+from pyclut.animation import ScaleAndFadeAnimation
 
 class ImageButton(clutter.Group):
 	__gtype_name__ = 'ImageButton'
@@ -54,5 +55,36 @@ class TextButton(ImageButton):
 		ImageButton.__init__(self, released_background, pressed_background, value)
 		self.text = clutter.Text(text)
 		self.add(self.text)
+
+class PulseButton(clutter.Group):
+	__gtype_name__ = 'PulseButton'
+	__gsignals__ = {
+		'pressed' : ( gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,) ),
+	}
+
+	def __init__(self, background, text=None, value=None):
+		clutter.Group.__init__(self)
+		self._value = value
+		self.text = None
+		self._background = background
+		self._anim_factory = Animator(default_duration_ms=10)
+		self._press = ScaleAndFadeAnimation(1.5, 0, 50, clutter.LINEAR)
+		self._press.connect("completed", self._restore)
+		self.add(self._background)
+		if text:
+			self.text = clutter.Text(text)
+			self.add(self.text)
+		self._background.connect("button-press-event", self._on_pressed)
+		self._background.set_reactive(True)
+
+	def _restore(self, *args):
+		self.set_scale(1.0, 1.0)
+		self.set_opacity(255)
+
+	def _on_pressed(self, background, event):
+		if event.button == 1:
+			self._press.apply(self)
+			self._press.start()
+			self.emit("pressed", self._value)
 
 
