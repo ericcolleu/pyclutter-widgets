@@ -1,16 +1,6 @@
 import clutter
 from pyclut.effects.transitions import Transition, Direction
-from pyclut.animation import ScaleAnimation, OpacityAnimation
-
-class ScaleAndFadeAnimation(ScaleAnimation, OpacityAnimation):
-	def __init__(self, scale, opacity, duration, style, timeline=None, alpha=None):
-		ScaleAnimation.__init__(self, scale, scale, duration, style, timeline=timeline, alpha=alpha)
-		OpacityAnimation.__init__(self, opacity, duration, style, timeline=self._timeline, alpha=self._alpha)
-
-	def do_prepare_animation(self):
-		behaviours = ScaleAnimation.do_prepare_animation(self)
-		behaviours.extend(OpacityAnimation.do_prepare_animation(self))
-		return behaviours
+from pyclut.animation import ScaleAndFadeAnimation
 
 class ZoomTransition(Transition):
 	def __init__(self, actor_in, actor_out, duration=500, style=clutter.LINEAR):

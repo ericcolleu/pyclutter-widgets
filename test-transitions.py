@@ -19,7 +19,7 @@ class TransitionTest(PyClutTest):
 		self._transition_names = transition_names
 		self._transitions = {
 			"Slide" : (SlideTransition, {"zone_object" : self._stage,}),
-			"Rotate" : (RotateTransition, {"direction" : clutter.ROTATE_CW, "axis" : clutter.Z_AXIS},),
+			"Rotate" : (RotateTransition, {"direction" : clutter.ROTATE_CW, "axis" : clutter.Y_AXIS},),
 			"Zoom" : (ZoomTransition, {},),
 		}
 
@@ -33,9 +33,6 @@ class TransitionTest(PyClutTest):
 		in_menu = self._menus[self._menu]
 		transitions = [self._get_transition(transition_name, in_menu, out_menu) for transition_name in self._transition_names]
 		[transition.start() for transition in transitions]
-
-		#transition = self._get_transition(self._transition_name, in_menu, out_menu)
-		#transition.start()
 
 	def _create_item(self, image):
 		item = clutter.Texture(image)

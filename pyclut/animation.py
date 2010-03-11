@@ -56,12 +56,17 @@ class RotateAnimation(Animation):
 		self._direction = direction
 
 	def do_prepare_animation(self):
-		return [clutter.BehaviourRotate(
+		behaviour = clutter.BehaviourRotate(
 			axis=self._axis,
 			angle_start=clamp_angle(self._actor.get_rotation(self._axis)[0]),
 			angle_end=clamp_angle(self._angle),
 			alpha=self._alpha,
-			direction=self._direction),]
+			direction=self._direction)
+		if self._axis == clutter.Y_AXIS:
+			behaviour.set_center(int(self._actor.get_width()/2), 0, 0)
+		elif self._axis == clutter.X_AXIS:
+			behaviour.set_center(0, int(self._actor.get_height()/2), 0)
+		return [behaviour,]
 
 class MoveAndRotateAnimation(MoveAnimation, RotateAnimation):
 	def __init__(self, destination, angle, axis, direction, duration, style, timeline=None, alpha=None):
@@ -129,6 +134,16 @@ class DepthAnimation(Animation):
 			alpha=self._alpha,
 			depth_start=int(self._actor.get_depth()),
 			depth_end=self._depth),]
+
+class ScaleAndFadeAnimation(ScaleAnimation, OpacityAnimation):
+	def __init__(self, scale, opacity, duration, style, timeline=None, alpha=None):
+		ScaleAnimation.__init__(self, scale, scale, duration, style, timeline=timeline, alpha=alpha)
+		OpacityAnimation.__init__(self, opacity, duration, style, timeline=self._timeline, alpha=self._alpha)
+
+	def do_prepare_animation(self):
+		behaviours = ScaleAnimation.do_prepare_animation(self)
+		behaviours.extend(OpacityAnimation.do_prepare_animation(self))
+		return behaviours
 
 class Animator(object):
 	def __init__(self, default_duration_ms=500, default_style=clutter.LINEAR):
