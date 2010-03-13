@@ -67,6 +67,7 @@ class PulseButton(clutter.Group):
 		self._value = value
 		self.text = None
 		self._background = background
+		self._background.set_anchor_point_from_gravity(clutter.GRAVITY_CENTER)
 		self._anim_factory = Animator(default_duration_ms=10)
 		self._press = ScaleAndFadeAnimation(1.5, 0, 50, clutter.LINEAR)
 		self._press.connect("completed", self._restore)
