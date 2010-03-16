@@ -13,8 +13,10 @@ class SimpleKeyboardTest(PyClutTest):
 
 	def run(self):
 		key_map = [
-			["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"],
-			["N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
+			["A", "B", "C", "D"],
+			["N", "O", "P", "Q", "R", "S"],
+			["N", "O", "P"],
+			["1", "2", "3", "4", "5"],
 		]
 		factory = PulseButtonFactory(background="./images/buttons/button.png")
 		background = RoundRectangle()

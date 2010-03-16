@@ -59,6 +59,18 @@ class PulseButtonFactory(object):
 			background.set_color(self._color or "White")
 		return PulseButton(background, text=text, value=value)
 
+class KeyRowLayout(clutter.Group):
+	__gtype_name__ = 'KeyRowLayout'
+	def __init__(self, keys, button_factory=None, button_size=(75,75), inter_button_space=0):
+		clutter.Group.__init__(self)
+		x, y = 0, 0
+		for key in keys:
+			button=button_factory.get_button(text=str(key), value=key)
+			button.set_size(*button_size)
+			self.add(button)
+			button.set_position(x, y)
+			x += button_size[0] + inter_button_space
+
 class SimpleKeyboard(clutter.Group):
 	__gtype_name__ = 'SimpleKeyboard'
 	__gsignals__ = {
@@ -76,23 +88,22 @@ class SimpleKeyboard(clutter.Group):
 		self.add(self._background)
 		self.__create_buttons()
 
+	def __get_keyboard_size(self):
+		height = self._inter_button_space + len(self._layout.get_key_map()) * (self._button_size[1]+self._inter_button_space)
+		width = 0
+		for line in self._layout.get_key_map():
+			width = max(width, self._inter_button_space + len(line)*(self._button_size[0]+self._inter_button_space))
+		return width, height
+
 	def __create_buttons(self):
-		line_width = 0
-		lines = self._layout.get_key_map()
-		height = self._inter_button_space + len(lines) * (self._button_size[1]+self._inter_button_space)
+		width, height = self.__get_keyboard_size()
+		self._background.set_size(width, height)
 		y=self._inter_button_space
-		for line in lines:
-			nb_key = len(line)
-			line_width = max(line_width, self._inter_button_space + nb_key*(self._button_size[0]+self._inter_button_space))
-			x=self._inter_button_space
-			for key in line:
-				button=self._button_factory.get_button(text=str(key), value=key)
-				button.set_size(*self._button_size)
-				self.add(button)
-				button.set_position(x, y)
-				x += self._button_size[0]+self._inter_button_space
+		for line in self._layout.get_key_map():
+			row = KeyRowLayout(line, self._button_factory, self._button_size, self._inter_button_space)
+			self.add(row)
+			row.set_position(self._inter_button_space+(width-row.get_width())/2, y)
 			y += self._button_size[1]+self._inter_button_space
-		self._background.set_size(line_width, height)
 
 	def _on_button_released(self, event, key):
 		self.emit("key-pressed", key())
