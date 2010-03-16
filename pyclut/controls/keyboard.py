@@ -1,6 +1,6 @@
 import clutter
 import gobject
-from pyclut.controls.button import TextButton
+from pyclut.controls.button import TextButton, PulseButton
 from pyclut.basics.rectangle import RoundRectangle
 
 class Key(object):
@@ -46,6 +46,18 @@ class KeyboardLayout:
 	def get_key_map(self):
 		return self._key_map
 
+class PulseButtonFactory(object):
+	def __init__(self, background=None, color=None):
+		self._background = background
+		self._color = color
+
+	def get_button(self, text=None, value=None):
+		if self._background:
+			background=clutter.Texture(self._background)
+		else:
+			background=clutter.RoundRectangle()
+			background.set_color(self._color or "White")
+		return PulseButton(background, text=text, value=value)
 
 class SimpleKeyboard(clutter.Group):
 	__gtype_name__ = 'SimpleKeyboard'
@@ -53,33 +65,30 @@ class SimpleKeyboard(clutter.Group):
 		'key-pressed' : ( gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,) ),
 	}
 
-	def __init__(self, layout=None, background=None,
-		button_released=None, button_pressed=None,
-		button_size=(75,75), inter_button_space=10):
+	def __init__(self, layout=None, background=None, button_factory=None,
+		button_size=(75,75), inter_button_space=0):
+		clutter.Group.__init__(self)
 		self._layout = layout
 		self._button_size = button_size
 		self._inter_button_space = inter_button_space
 		self._background = background or RoundRectangle()
-		self._button_released = button_released or RoundRectangle()
-		self._button_pressed = button_pressed or RoundRectangle()
+		self._button_factory = button_factory or PulseButtonFactory()
 		self.add(self._background)
 		self.__create_buttons()
 
 	def __create_buttons(self):
 		line_width = 0
 		lines = self._layout.get_key_map()
-		height = len(lines) * (self._button_size[1]+self._inter_button_space)
+		height = self._inter_button_space + len(lines) * (self._button_size[1]+self._inter_button_space)
 		y=self._inter_button_space
 		for line in lines:
 			nb_key = len(line)
-			line_width = max(line_width, nb_key*(self._button_size[0]+self._inter_button_space))
+			line_width = max(line_width, self._inter_button_space + nb_key*(self._button_size[0]+self._inter_button_space))
 			x=self._inter_button_space
 			for key in line:
-				button=TextButton(str(key), self._button_released, self._button_pressed, value=key)
-				print "add button %s" % key
-				self.add(button)
-				print "button %s added" % key
+				button=self._button_factory.get_button(text=str(key), value=key)
 				button.set_size(*self._button_size)
+				self.add(button)
 				button.set_position(x, y)
 				x += self._button_size[0]+self._inter_button_space
 			y += self._button_size[1]+self._inter_button_space

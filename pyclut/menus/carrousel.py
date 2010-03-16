@@ -1,21 +1,17 @@
 import clutter
-from pyclut.animation import ScaleAnimation, DepthAnimation, TurnAroundAnimation
 
-class CarrouselItemAnimation(ScaleAnimation, DepthAnimation, TurnAroundAnimation):
-	def __init__(self, center, radius, angle, tilt, scale, depth, duration, style, timeline=None, alpha=None):
-		ScaleAnimation.__init__(self, scale, scale, duration, style, timeline=timeline, alpha=alpha)
-		DepthAnimation.__init__(self, depth, duration, style, timeline=self._timeline, alpha=self._alpha)
-		TurnAroundAnimation.__init__(self, center, radius, angle, tilt, duration, style, timeline=self._timeline, alpha=self._alpha)
-
-	def do_prepare_animation(self):
-		behaviours = ScaleAnimation.do_prepare_animation(self)
-		behaviours.extend(DepthAnimation.do_prepare_animation(self))
-		behaviours.extend(TurnAroundAnimation.do_prepare_animation(self))
-		return behaviours
-
+# TODO: Add a "select_item" or "select" method
 class Carrousel(clutter.Group):
+	"""Carrousel menu is a list of items turning around an ellipse."""
 	__gtype_name__ = 'Carrousel'
 	def __init__(self, x=0, y=0, size=(512,512), item_size=(128,128), *children):
+		"""Constructor
+		Carrousel(x, y, size, item_size, *children) -> Carrousel instance
+		x, y : carrousel position (default is x=0, y=0)
+		size : witdh and height of the carrousel (default is (512, 512))
+		item_size : width and height of a menu item (default is (128, 128))
+		children : optional list of item to add to the menu.
+		"""
 		clutter.Group.__init__(self)
 		self._x = x
 		self._y = y
@@ -63,6 +59,9 @@ class Carrousel(clutter.Group):
 		self._timeline.start()
 
 	def add(self, *children):
+		"""Add a list of items to the carrousel menu.
+		carrousel.add(item1, item2, item3) -> return None
+		"""
 		[child.set_size(*self._item_size) for child in children]
 		self.do_add(*children)
 		clutter.Group.add(self, *children)
@@ -87,6 +86,9 @@ class Carrousel(clutter.Group):
 			self.__update_item(child, index*self._step)
 
 	def set_tilt(self, angles):
+		"""Set the view angle in the 3 axis.
+		carrousel.set_tilt((300.0, 360.0, 360.0)) -> return None
+		"""
 		self._tilt = angles
 		for item in self._children:
 			item.set_tilt(*self._tilt)
@@ -123,6 +125,9 @@ class Carrousel(clutter.Group):
 			item.depth.set_bounds(depth_end, self._unselected_depth)
 
 	def next(self):
+		"""Select the next item.
+		carrousel.next() -> return None
+		"""
 		if self.get_reactive():
 			self.set_reactive(False)
 			for child in self._children:
@@ -130,6 +135,9 @@ class Carrousel(clutter.Group):
 			self._timeline.start()
 
 	def previous(self):
+		"""Select the previous item.
+		carrousel.next() -> return None
+		"""
 		if self.get_reactive():
 			self.set_reactive(False)
 			for child in self._children:

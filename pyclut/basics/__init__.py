@@ -80,7 +80,7 @@ class Shape (clutter.Actor):
 
 	def do_draw_shape(self, width, height):
 		pass
-	
+
 	def __draw_shape(self, width, height, color=None, texture=None):
 		self.do_draw_shape(width, height)
 		if texture:
@@ -104,7 +104,7 @@ class Shape (clutter.Actor):
 			return
 
 		(x1, y1, x2, y2) = self.get_allocation_box()
-		self.__paint_star(x2 - x1, y2 - y1, pick_color)
+		self.__draw_shape(x2 - x1, y2 - y1, pick_color)
 
 	def do_clicked (self):
 		sys.stdout.write("Clicked!\n")

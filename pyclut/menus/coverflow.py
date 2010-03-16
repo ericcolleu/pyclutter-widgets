@@ -20,8 +20,19 @@ class CoverflowItemAnimation(MoveAnimation, RotateAnimation, ScaleAnimation, Dep
 		return behaviours
 
 class Coverflow(clutter.Group):
+	"""Coverflow menu is a list of items on a line rotated if not selected."""
 	__gtype_name__ = 'Coverflow'
 	def __init__(self, x=0, y=0, size=(512, 128), item_size=(128, 128), angle=70, inter_item_space=50, selection_depth=200, *children):
+		"""Constructor
+		Coverflow(x, y, size, item_size, angle, inter_item_space, selection_depth, *children) -> Coverflow instance
+		x, y : coverflow position (default is x=0, y=0)
+		size : witdh and height of the carrousel (default is (512, 512))
+		item_size : width and height of a menu item (default is (128, 128))
+		angle : rotation angle of unselected items (default is 70)
+		inter_item_space : space between two items (default is 50)
+		selection_depth : selected item is bring to front (default is 200)
+		children : optional list of item to add to the menu.
+		"""
 		clutter.Group.__init__(self)
 		self._x = x
 		self._y = y
@@ -38,6 +49,9 @@ class Coverflow(clutter.Group):
 			self.add(*children)
 
 	def add(self, *children):
+		"""Add a list of items to the coverflow menu.
+		coverflow.add(item1, item2, item3) -> return None
+		"""
 		[child.set_size(*self._item_size) for child in children]
 		self.do_add(*children)
 		clutter.Group.add(self, *children)
@@ -102,20 +116,29 @@ class Coverflow(clutter.Group):
 
 	def _on_anim_completed(self, event):
 		self.set_reactive(True)
-		
+
 	def next(self):
+		"""Select the next item.
+		coverflow.next() -> return None
+		"""
 		if self.get_reactive():
 			self.set_reactive(False)
 			self._selected = min(self._selected + 1,len(self._children)-1)# % len(self._children)
 			self.__update_items_position(clutter.ROTATE_CW)
 
 	def previous(self):
+		"""Select the previous item.
+		coverflow.next() -> return None
+		"""
 		if self.get_reactive():
 			self.set_reactive(False)
 			self._selected = max(self._selected - 1, 0)# % len(self._children)
 			self.__update_items_position(clutter.ROTATE_CCW)
 
 	def get_selected(self):
+		"""Return the rank of the selected item.
+		coverflow.get_selected() -> return integer
+		"""
 		return self._selected
 
 

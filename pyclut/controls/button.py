@@ -2,6 +2,7 @@
 import gobject
 from pyclut.animation import Animator
 from pyclut.animation import ScaleAndFadeAnimation
+from pyclut.basics.rectangle import RoundRectangle
 
 class ImageButton(clutter.Group):
 	__gtype_name__ = 'ImageButton'
@@ -57,26 +58,43 @@ class TextButton(ImageButton):
 		self.add(self.text)
 
 class PulseButton(clutter.Group):
+	"""PulseButton : button scaling to 1.5 its size during
+	a short time to create the effect of pulsing.
+	Emit the 'pressed' signal.
+	"""
 	__gtype_name__ = 'PulseButton'
 	__gsignals__ = {
 		'pressed' : ( gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,) ),
 	}
 
-	def __init__(self, background, text=None, value=None):
+	def __init__(self, background=None, text=None, value=None):
+		"""Constructor.
+		PulseButton(background, text, value) -> return an instance of PulseButton
+		background -> clutter object to set as background (ex : Texture or Rectangle)
+		The background object is the reactive part of the button, when you click on it,
+		the signal 'pressed' is emitted.
+		text -> string represnting the text to set on the button
+		value -> object given in the emitted signal
+		"""
 		clutter.Group.__init__(self)
 		self._value = value
 		self.text = None
-		self._background = background
+		self._background = background or RoundRectangle()
 		self._background.set_anchor_point_from_gravity(clutter.GRAVITY_CENTER)
-		self._anim_factory = Animator(default_duration_ms=10)
 		self._press = ScaleAndFadeAnimation(1.5, 0, 50, clutter.LINEAR)
 		self._press.connect("completed", self._restore)
 		self.add(self._background)
 		if text:
-			self.text = clutter.Text(text)
+			self.text = clutter.Text("courrier new 24px", text)
+			self.text.set_anchor_point_from_gravity(clutter.GRAVITY_CENTER)
 			self.add(self.text)
+			x, y = self.get_position()
+			#self.text.set_position(x + self.text.get_width()/2, y + self.get_height()/2)
 		self._background.connect("button-press-event", self._on_pressed)
 		self._background.set_reactive(True)
+
+	def set_position(self, x, y):
+		clutter.Group.set_position(self, x+self._background.get_width()/2, y+self._background.get_height()/2)
 
 	def _restore(self, *args):
 		self.set_scale(1.0, 1.0)

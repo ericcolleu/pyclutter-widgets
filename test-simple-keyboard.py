@@ -2,38 +2,38 @@
 
 import clutter
 
-import glob, time
-import os.path
-from clutter import keysyms
-from pyclut.controls.keyboard import SimpleKeyboard, KeyboardLayout
+from test import PyClutTest
+from pyclut.controls.keyboard import SimpleKeyboard, KeyboardLayout, PulseButtonFactory
+from pyclut.basics.rectangle import RoundRectangle
 
-def on_input(stage, event):
-	if event.keyval == keysyms.q:
-		clutter.main_quit()
 
-def main():
-	stage = clutter.Stage()
-	stage.set_size(1024,768)
-	stage.connect('destroy', clutter.main_quit)
-	stage.set_color(clutter.Color(0, 0, 0, 255))
-	stage.set_title('Simple Keyboard')
-# 	key_map = [
-# 		["A", "B", "C",],
-# 		["D", "E", "F", "G"],
-# 		["H", "I",],
-# 	]
-	key_map = [
-		["A",],
-	]
-	keyboard = SimpleKeyboard(layout=KeyboardLayout("layout", key_map), background=None, 
-		button_released=None, button_pressed=None,
-		button_size=(75,75), inter_button_space=10)
-	stage.add(keyboard)
-	stage.show()
-	stage.connect('key-press-event', on_input)
-	clutter.main()
+class SimpleKeyboardTest(PyClutTest):
+	def __init__(self, *args, **kwargs):
+		PyClutTest.__init__(self, *args, **kwargs)
+
+	def run(self):
+		key_map = [
+			["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"],
+			["N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
+		]
+		factory = PulseButtonFactory(background="./images/buttons/button.png")
+		background = RoundRectangle()
+		background.set_color("Black")
+		keyboard = SimpleKeyboard(
+			layout=KeyboardLayout("layout", key_map),
+			background=background,
+			button_factory=factory,
+			button_size=(48,48),
+			inter_button_space=10
+		)
+		self._stage.add(keyboard)
+		keyboard.set_position(
+			self._stage.get_width()/2-keyboard.get_width()/2,
+			self._stage.get_height()/2-keyboard.get_height()/2)
+		clutter.main()
 
 if __name__ == '__main__':
-	main()
+	test = SimpleKeyboardTest(resolution=(800, 600), background_color="White")
+	test.run()
 
 
