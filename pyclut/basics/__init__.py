@@ -7,6 +7,10 @@ import clutter
 from clutter import cogl
 
 class Shape (clutter.Actor):
+	"""Base abstract class to create custom shapes.
+	A shape can be filled with a color or a texture,
+	and emit the 'clicked' signal when mouse button is released on it.
+	"""
 	__gtype_name__ = 'Shape'
 	__gproperties__ = {
 	  'color' : ( \
@@ -32,10 +36,24 @@ class Shape (clutter.Actor):
 		self.connect('leave-event', self.do_leave_event)
 
 	def set_color(self, color):
-		self._color = clutter.color_from_string(color)
+		"""Fill the shape with the color given in parameter.
+		color may be a clutter.Color object or a string representing
+		the color name.
+		"""
+		if isinstance(color, clutter.Color):
+			self._color = color
+		else:
+			self._color = clutter.color_from_string(color)
 
-	def set_texture(self, image_file):
-		self._texture = clutter.Texture(image_file)
+	def set_texture(self, image):
+		"""Fill the shape with a texture given in parameter.
+		image may be a clutter.Texture object or a string
+		representing the texture file path.
+		"""
+		if isinstance(image, clutter.Texture):
+			self._texture = image
+		else:
+			self._texture = clutter.Texture(image)
 
 	def do_set_property (self, pspec, value):
 		if pspec.name == 'color':
@@ -107,7 +125,7 @@ class Shape (clutter.Actor):
 		self.__draw_shape(x2 - x1, y2 - y1, pick_color)
 
 	def do_clicked (self):
-		sys.stdout.write("Clicked!\n")
+		print "Clicked!"
 
 
 

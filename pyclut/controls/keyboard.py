@@ -61,15 +61,22 @@ class PulseButtonFactory(object):
 
 class KeyRowLayout(clutter.Group):
 	__gtype_name__ = 'KeyRowLayout'
+	__gsignals__ = {
+		'key-pressed' : ( gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,) ),
+	}
 	def __init__(self, keys, button_factory=None, button_size=(75,75), inter_button_space=0):
 		clutter.Group.__init__(self)
 		x, y = 0, 0
 		for key in keys:
 			button=button_factory.get_button(text=str(key), value=key)
 			button.set_size(*button_size)
+			button.connect("pressed", self._on_pressed)
 			self.add(button)
 			button.set_position(x, y)
 			x += button_size[0] + inter_button_space
+
+	def _on_pressed(self, event, key):
+		self.emit("key-pressed", key)
 
 class SimpleKeyboard(clutter.Group):
 	__gtype_name__ = 'SimpleKeyboard'
@@ -101,11 +108,12 @@ class SimpleKeyboard(clutter.Group):
 		y=self._inter_button_space
 		for line in self._layout.get_key_map():
 			row = KeyRowLayout(line, self._button_factory, self._button_size, self._inter_button_space)
+			row.connect("key-pressed", self._on_button)
 			self.add(row)
 			row.set_position(self._inter_button_space+(width-row.get_width())/2, y)
 			y += self._button_size[1]+self._inter_button_space
 
-	def _on_button_released(self, event, key):
+	def _on_button(self, event, key):
 		self.emit("key-pressed", key())
 
 

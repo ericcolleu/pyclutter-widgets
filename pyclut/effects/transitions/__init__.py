@@ -51,3 +51,4 @@ class Transition(object):
 		self._actor_out.hide()
 
 
+

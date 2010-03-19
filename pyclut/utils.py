@@ -10,4 +10,7 @@ def clamp_angle(x):
 	if x>360: x-=360
 	return x
 
+class AbstractMethodNotImplemented(Exception): pass
+
+
 

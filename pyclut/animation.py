@@ -1,9 +1,9 @@
 import clutter
 import gobject
-from pyclut.utils import clamp_angle
+from pyclut.utils import clamp_angle, AbstractMethodNotImplemented
 
-class Animation(clutter.Behaviour):
-	__gtype_name__ = 'Animation'
+class AbstractAnimation(clutter.Behaviour):
+	__gtype_name__ = 'AbstractAnimation'
 	__gsignals__ = {
 		'completed' : ( \
 		  gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, () \
@@ -19,7 +19,7 @@ class Animation(clutter.Behaviour):
 		self._actor = None
 
 	def do_prepare_animation(self):
-		return []
+		raise AbstractMethodNotImplemented("Animation must implement a do_prepare_animation method")
 
 	def _on_done(self, timeline):
 		[behaviour.remove_all() for behaviour in self._behaviours]
@@ -37,9 +37,9 @@ class Animation(clutter.Behaviour):
 		self._timeline.rewind()
 		self._timeline.start()
 
-class MoveAnimation(Animation):
+class MoveAnimation(AbstractAnimation):
 	def __init__(self, destination, duration, style, timeline=None, alpha=None):
-		Animation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
+		AbstractAnimation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
 		self._destination = destination
 
 	def do_prepare_animation(self):
@@ -48,9 +48,9 @@ class MoveAnimation(Animation):
 		behaviours = [clutter.BehaviourPath(alpha=self._alpha, path=path),]
 		return behaviours
 
-class RotateAnimation(Animation):
+class RotateAnimation(AbstractAnimation):
 	def __init__(self, angle, axis, direction, duration, style, timeline=None, alpha=None):
-		Animation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
+		AbstractAnimation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
 		self._angle = angle
 		self._axis = axis
 		self._direction = direction
@@ -78,9 +78,9 @@ class MoveAndRotateAnimation(MoveAnimation, RotateAnimation):
 		behaviours.extend(RotateAnimation.do_prepare_animation(self))
 		return behaviours
 
-class ScaleAnimation(Animation):
+class ScaleAnimation(AbstractAnimation):
 	def __init__(self, scale_x, scale_y, duration, style, timeline=None, alpha=None):
-		Animation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
+		AbstractAnimation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
 		self._scale_x = scale_x
 		self._scale_y = scale_y
 
@@ -93,9 +93,9 @@ class ScaleAnimation(Animation):
 			y_scale_end=self._scale_y,
 			alpha=self._alpha),]
 
-class OpacityAnimation(Animation):
+class OpacityAnimation(AbstractAnimation):
 	def __init__(self, opacity, duration, style, timeline=None, alpha=None):
-		Animation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
+		AbstractAnimation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
 		self._opacity = opacity
 
 	def do_prepare_animation(self):
@@ -104,9 +104,9 @@ class OpacityAnimation(Animation):
 			opacity_end=self._opacity,
 			alpha=self._alpha),]
 
-class TurnAroundAnimation(Animation):
+class TurnAroundAnimation(AbstractAnimation):
 	def __init__(self, center, radius, angle, tilt, duration, style, timeline=None, alpha=None):
-		Animation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
+		AbstractAnimation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
 		self._radius = radius
 		self._center = center
 		self._angle = angle
@@ -124,9 +124,9 @@ class TurnAroundAnimation(Animation):
 		behaviour.set_tilt(*self._tilt)
 		return [behaviour,]
 
-class DepthAnimation(Animation):
+class DepthAnimation(AbstractAnimation):
 	def __init__(self, depth, duration, style, timeline=None, alpha=None):
-		Animation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
+		AbstractAnimation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
 		self._depth = depth
 
 	def do_prepare_animation(self):

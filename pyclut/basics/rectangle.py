@@ -6,6 +6,10 @@ from clutter import cogl
 from pyclut.basics import Shape
 
 class RoundRectangle(Shape):
+	"""Rectangle Shape with rounded corner.
+	You can set the radius property to change the rounded radius
+	of corners (default is 10).
+	"""
 	__gtype_name__ = 'RoundRectangle'
 	__gproperties__ = {
 	  'radius' : (gobject.TYPE_INT, 'Radius', 'Rectangle rounded corner radius',
@@ -14,8 +18,11 @@ class RoundRectangle(Shape):
 	def __init__ (self):
 		Shape.__init__(self)
 		self._radius = 10
-	
+
 	def set_radius(self, radius):
+		"""Change the radius of corners.
+		radius must be an integer.
+		"""
 		self._radius = radius
 
 	def do_set_property (self, pspec, value):
