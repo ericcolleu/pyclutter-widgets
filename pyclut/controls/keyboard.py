@@ -18,10 +18,10 @@ class Key(object):
 			return value
 		return self.text
 
-class Modifier(Key):
-	def __init__ (self, pass_to_layout, value=None, text=None):
+class LayoutSwitcher(Key):
+	def __init__ (self, switch_to_layout, value=None, text=None):
 		SpecialKey.__init__(self, value, text)
-		self.pass_to_layout = pass_to_layout
+		self.switch_to_layout = switch_to_layout
 
 class KeyFactory(object):
 	def getKey(self, key):
