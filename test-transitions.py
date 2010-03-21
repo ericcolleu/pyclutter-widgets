@@ -7,6 +7,7 @@ from pyclut.effects.transitions import TransitionZone
 from pyclut.effects.transitions.slide import SlideTransition
 from pyclut.effects.transitions.rotate import RotateTransition
 from pyclut.effects.transitions.zoom import ZoomTransition
+from pyclut.effects.transitions.fade import FadeTransition
 from pyclut.menus.carrousel import Carrousel
 from pyclut.menus.coverflow import Coverflow
 from pyclut.menus.thumbnail_menu import ThumbnailMenu
@@ -21,6 +22,7 @@ class TransitionTest(PyClutTest):
 			"Slide" : (SlideTransition, {"zone_object" : self._stage,}),
 			"Rotate" : (RotateTransition, {"direction" : clutter.ROTATE_CW, "axis" : clutter.Y_AXIS},),
 			"Zoom" : (ZoomTransition, {},),
+			"Fade" : (FadeTransition, {},),
 		}
 
 	def _get_transition(self, transition_name, actor_in, actor_out):
@@ -28,9 +30,9 @@ class TransitionTest(PyClutTest):
 		return transition_class(actor_in=actor_in, actor_out=actor_out, duration=500, **transition_kwargs)
 
 	def _on_item_clicked(self, item, event):
-		out_menu = self._menus[self._menu]
-		self._menu = (self._menu + 1)%len(self._menus)
-		in_menu = self._menus[self._menu]
+		out_menu = self.objects[self.current]
+		self.current = (self.current + 1)%len(self.objects)
+		in_menu = self.objects[self.current]
 		transitions = [self._get_transition(transition_name, in_menu, out_menu) for transition_name in self._transition_names]
 		[transition.start() for transition in transitions]
 
@@ -41,25 +43,17 @@ class TransitionTest(PyClutTest):
 		return item
 
 	def run(self):
-		carrousel = Carrousel(size=(512,512), item_size=(128,128))
-		coverflow = Coverflow(size=(512, 512), item_size=(128,128), angle=70, inter_item_space=50, selection_depth=200)
-		thumbnailmenu = ThumbnailMenu(size=(300, 300), item_size=(128,128))
-		coverflow.hide()
-		thumbnailmenu.hide()
-		self._menus = [carrousel, coverflow, thumbnailmenu]
-		self._stage.add(carrousel)
-		self._stage.add(coverflow)
-		self._stage.add(thumbnailmenu)
+		self.objects = [self._create_item(self.get_image()) for rank in range(10)]
+		self.current = 0
 		self._stage.show()
-		for rank in range(10):
-			image = self.get_image()
-			carrousel.add(self._create_item(image))
-			coverflow.add(self._create_item(image))
-			thumbnailmenu.add(self._create_item(image))
-		carrousel.set_position(
-			self._stage.get_size()[0]/2-carrousel.get_size()[0]/2,
-			self._stage.get_size()[1]/2-carrousel.get_size()[1]/2
-		)
+		for obj in self.objects:
+			obj.set_position(
+				self._stage.get_size()[0]/2-obj.get_size()[0]/2,
+				self._stage.get_size()[1]/2-obj.get_size()[1]/2
+			)
+			obj.hide()
+			self._stage.add(obj)
+		self.objects[0].show()
 		clutter.main()
 
 if __name__ == '__main__':
