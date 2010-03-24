@@ -1,16 +1,6 @@
 import clutter
 from pyclut.effects.transitions import Transition, Direction
-from pyclut.animation import MoveAnimation, OpacityAnimation
-
-class MoveAndFadeAnimation(MoveAnimation, OpacityAnimation):
-	def __init__(self, destination, opacity, duration, style, timeline=None, alpha=None):
-		MoveAnimation.__init__(self, destination, duration, style, timeline=timeline, alpha=alpha)
-		OpacityAnimation.__init__(self, opacity, duration, style, timeline=self._timeline, alpha=self._alpha)
-
-	def do_prepare_animation(self):
-		behaviours = MoveAnimation.do_prepare_animation(self)
-		behaviours.extend(OpacityAnimation.do_prepare_animation(self))
-		return behaviours
+from pyclut.animation import MoveAnimation
 
 class SlideTransition(Transition):
 	def __init__(self, actor_in, actor_out, zone_object, in_direction=Direction.LEFT, out_direction=Direction.LEFT, final_position=None, duration=500, style=clutter.LINEAR):
@@ -41,7 +31,7 @@ class SlideTransition(Transition):
 			),
 		}
 		self._actor_in.set_position(*positions[self._in_direction])
-		self._actor_in.set_opacity(0)
+		#self._actor_in.set_opacity(0)
 
 	def __prepare_out_position(self):
 		actor_out_width, actor_out_height = self._actor_out.get_size()
@@ -73,7 +63,7 @@ class SlideTransition(Transition):
 
 	def create_animations(self):
 		self._actor_in.show()
-		anim_in = MoveAndFadeAnimation(self._final_position, 255, self._duration, self._style)
-		anim_out = MoveAndFadeAnimation(self._out_final_position, 0, self._duration, self._style)
+		anim_in = MoveAnimation(self._final_position, self._duration, self._style)
+		anim_out = MoveAnimation(self._out_final_position, self._duration, self._style)
 		return anim_in, anim_out
 
