@@ -84,7 +84,7 @@ class RotateAnimation(AbstractAnimation):
 			alpha=self._alpha,
 			direction=self._direction)
 		if self._center:
-			behaviour.set_center(*center)
+			behaviour.set_center(*self._center)
 		return [behaviour,]
 
 class MoveAndFlipAnimation(MoveAnimation, CenteredRotateAnimation):

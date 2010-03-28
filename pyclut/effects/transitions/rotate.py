@@ -3,8 +3,8 @@ from pyclut.effects.transitions import Transition, Direction
 from pyclut.animation import RotateAnimation, OpacityAnimation
 
 class RotateAndFadeAnimation(RotateAnimation, OpacityAnimation):
-	def __init__(self, angle, axis, direction, opacity, duration, style, timeline=None, alpha=None):
-		RotateAnimation.__init__(self, angle, axis, direction, duration, style, timeline=timeline, alpha=alpha)
+	def __init__(self, angle, axis, direction, opacity, duration, style, center, timeline=None, alpha=None):
+		RotateAnimation.__init__(self, angle, axis, direction, duration, style, center, timeline=timeline, alpha=alpha)
 		OpacityAnimation.__init__(self, opacity, duration, style, timeline=self._timeline, alpha=self._alpha)
 
 	def do_prepare_animation(self):
@@ -13,12 +13,13 @@ class RotateAndFadeAnimation(RotateAnimation, OpacityAnimation):
 		return behaviours
 
 class RotateTransition(Transition):
-	def __init__(self, actor_in, actor_out, direction=clutter.ROTATE_CW, axis=clutter.Y_AXIS, final_position=None, duration=500, style=clutter.LINEAR):
+	def __init__(self, actor_in, actor_out, direction=clutter.ROTATE_CW, axis=clutter.Y_AXIS, final_position=None, center=None, duration=500, style=clutter.LINEAR):
 		Transition.__init__(self, actor_out, actor_in, actor_out, final_position=final_position or actor_in.get_position(), duration=duration, style=style)
 		self._axis = axis
 		self._direction = direction
 		self._duration = duration
 		self._style = style
+		self._center = center
 
 	def __prepare_in_position(self):
 		self._actor_in.set_position(*self._final_position)
@@ -37,8 +38,8 @@ class RotateTransition(Transition):
 
 	def create_animations(self):
 		self._actor_in.show()
-		anim_in = RotateAndFadeAnimation(0, self._axis, self._direction, 255, self._duration, self._style)
-		anim_out = RotateAndFadeAnimation(-180, self._axis, self._direction, 0, self._duration, self._style)
+		anim_in = RotateAndFadeAnimation(0, self._axis, self._direction, 255, self._duration, self._style, self._center)
+		anim_out = RotateAndFadeAnimation(-180, self._axis, self._direction, 0, self._duration, self._style, self._center)
 		return anim_in, anim_out
 
 
