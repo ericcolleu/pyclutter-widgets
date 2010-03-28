@@ -48,7 +48,7 @@ class MoveAnimation(AbstractAnimation):
 		behaviours = [clutter.BehaviourPath(alpha=self._alpha, path=path),]
 		return behaviours
 
-class RotateAnimation(AbstractAnimation):
+class CenteredRotateAnimation(AbstractAnimation):
 	def __init__(self, angle, axis, direction, duration, style, timeline=None, alpha=None):
 		AbstractAnimation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
 		self._angle = angle
@@ -68,14 +68,33 @@ class RotateAnimation(AbstractAnimation):
 			behaviour.set_center(0, int(self._actor.get_height()/2), 0)
 		return [behaviour,]
 
-class MoveAndRotateAnimation(MoveAnimation, RotateAnimation):
+class RotateAnimation(AbstractAnimation):
+	def __init__(self, angle, axis, direction, duration, style, center=None, timeline=None, alpha=None):
+		AbstractAnimation.__init__(self, duration, style, timeline=timeline, alpha=alpha)
+		self._angle = angle
+		self._axis = axis
+		self._direction = direction
+		self._center = center
+
+	def do_prepare_animation(self):
+		behaviour = clutter.BehaviourRotate(
+			axis=self._axis,
+			angle_start=clamp_angle(self._actor.get_rotation(self._axis)[0]),
+			angle_end=clamp_angle(self._angle),
+			alpha=self._alpha,
+			direction=self._direction)
+		if self._center:
+			behaviour.set_center(*center)
+		return [behaviour,]
+
+class MoveAndFlipAnimation(MoveAnimation, CenteredRotateAnimation):
 	def __init__(self, destination, angle, axis, direction, duration, style, timeline=None, alpha=None):
 		MoveAnimation.__init__(self, destination, duration, style, timeline=timeline, alpha=alpha)
-		RotateAnimation.__init__(self, angle, axis, direction, duration, style, timeline=self._timeline, alpha=self._alpha)
+		CenteredRotateAnimation.__init__(self, angle, axis, direction, duration, style, timeline=self._timeline, alpha=self._alpha)
 
 	def do_prepare_animation(self):
 		behaviours = MoveAnimation.do_prepare_animation(self)
-		behaviours.extend(RotateAnimation.do_prepare_animation(self))
+		behaviours.extend(CenteredRotateAnimation.do_prepare_animation(self))
 		return behaviours
 
 class ScaleAnimation(AbstractAnimation):
@@ -186,8 +205,8 @@ class Animator(object):
 			style or self._default_style,
 		)
 
-	def createMoveAndRotateAnimation(self, destination, angle, axis, direction, duration_ms=None, style=None):
-		return MoveAndRotateAnimation(
+	def createMoveAndFlipAnimation(self, destination, angle, axis, direction, duration_ms=None, style=None):
+		return MoveAndFlipAnimation(
 			destination,
 			angle,
 			axis,
