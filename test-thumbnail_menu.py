@@ -4,6 +4,7 @@ import clutter
 from test import PyClutTest
 from clutter import keysyms
 from pyclut.menus.thumbnail_menu import ThumbnailMenu
+from pyclut.controls.button import PulseButton
 
 class ThumbnailMenuTest(PyClutTest):
 	def __init__(self, *args, **kwargs):
@@ -32,12 +33,14 @@ class ThumbnailMenuTest(PyClutTest):
 			row=nb_row,
 			column=nb_column,
 			inter_item_space=inter_item,
+			selection_depth=50
 		)
 		self._stage.add(self.thumbnailmenu)
 		self._stage.show()
 		for rank in range(20):
 			image = self.get_image()
-			self.thumbnailmenu.add(clutter.Texture(image))
+			item = PulseButton(clutter.Texture(image))
+			self.thumbnailmenu.add(item)
 		self.thumbnailmenu.set_position(
 			self._stage_center[0]-self.thumbnailmenu.get_size()[0]/2,
 			self._stage_center[1]-self.thumbnailmenu.get_size()[1]/2
