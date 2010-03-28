@@ -6,6 +6,7 @@ import glob, time
 import os.path
 from clutter import keysyms
 from pyclut.menus.coverflow import Coverflow
+from pyclut.effects.reflect import ReflectedItem
 global current
 current=1
 
@@ -16,7 +17,7 @@ def on_input(stage, event, coverflow, item_images):
 	elif event.keyval == keysyms.Right:
 		coverflow.next()
 	elif event.keyval == keysyms.a:
-		coverflow.add(clutter.Texture(item_images[current]))
+		coverflow.add(ReflectedItem(clutter.Texture(item_images[current])))
 		current = (current + 1) % len(item_images)
 	elif event.keyval == keysyms.q:
 		clutter.main_quit()
@@ -41,8 +42,8 @@ def main(image_directory):
 	items = []
 	stage.show()
 	for image in item_images:
-		coverflow.add(clutter.Texture(image))
-	coverflow.set_position(0, 200)
+		coverflow.add(ReflectedItem(clutter.Texture(image)))
+	coverflow.set_position(0, 400)
 	stage.connect('key-press-event', on_input, coverflow, item_images)
 	clutter.main()
 
