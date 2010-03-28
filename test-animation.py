@@ -5,7 +5,7 @@ import clutter
 import glob, time
 import os.path
 from clutter import keysyms
-from pyclut.animation import Animator, MoveAndRotateAnimation, TurnAroundAnimation
+from pyclut.animation import Animator, TurnAroundAnimation
 global current_anim
 current_anim=0
 global anims_label
