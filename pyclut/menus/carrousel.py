@@ -1,10 +1,11 @@
 import clutter
+from pyclut.utils import clamp_angle
 
 # TODO: Add a "select_item" or "select" method
 class Carrousel(clutter.Group):
 	"""Carrousel menu is a list of items turning around an ellipse."""
 	__gtype_name__ = 'Carrousel'
-	def __init__(self, x=0, y=0, size=(512,512), item_size=(128,128), *children):
+	def __init__(self, x=0, y=0, size=(512,512), item_size=(128,128), fade_ratio=0, *children):
 		"""Constructor
 		Carrousel(x, y, size, item_size, *children) -> Carrousel instance
 		x, y : carrousel position (default is x=0, y=0)
@@ -28,6 +29,7 @@ class Carrousel(clutter.Group):
 		self._unselected_scale = 1.0
 		self._selected_depth = 100
 		self._unselected_depth = 0
+		self._fade_ratio = fade_ratio
 		if children:
 			self.add(*children)
 
@@ -37,7 +39,14 @@ class Carrousel(clutter.Group):
 		else:
 			self._step = 0
 
-	def __update_item(self, item, angle):
+	def __update_opacity(self, item):
+		if item.rank < (len(self._children) / 2):
+			item.set_opacity(max(10, 255-item.rank*self._fade_ratio))
+		else:
+			item.set_opacity(max(10, 255-(len(self._children) - item.rank)*self._fade_ratio))
+
+	def __update_item(self, item, angle, rank):
+		angle = clamp_angle(90+self._step*rank)
 		item.ellipse = clutter.BehaviourEllipse(
 			self._alpha,
 			self._x,
@@ -47,7 +56,8 @@ class Carrousel(clutter.Group):
 			angle, angle)
 		item.ellipse.set_tilt(*self._tilt)
 		item.ellipse.apply(item)
-		if angle == 90:
+		item.rank = rank
+		if rank == 0:
 			item.scale = clutter.BehaviourScale(1.0, 1.0, self._selected_scale, self._selected_scale, self._alpha)
 			item.depth = clutter.BehaviourDepth(item.get_depth(), self._selected_depth, self._alpha)
 		else:
@@ -56,6 +66,7 @@ class Carrousel(clutter.Group):
 		item.scale.apply(item)
 		item.depth.apply(item)
 		item.angle = angle
+		self.__update_opacity(item)
 		self._timeline.start()
 
 	def add(self, *children):
@@ -71,7 +82,7 @@ class Carrousel(clutter.Group):
 			self._children.append(child)
 		self.__update_step()
 		for index, child in enumerate(self._children):
-			self.__update_item(child, index*self._step)
+			self.__update_item(child, index*self._step, index)
 
 	def remove(self, *children):
 		clutter.Group.remove(self, *children)
@@ -83,7 +94,7 @@ class Carrousel(clutter.Group):
 				self._children.remove(child)
 		self.__update_step()
 		for index, child in enumerate(self._children):
-			self.__update_item(child, index*self._step)
+			self.__update_item(child, index*self._step, index)
 
 	def set_tilt(self, angles):
 		"""Set the view angle in the 3 axis.
@@ -101,28 +112,32 @@ class Carrousel(clutter.Group):
 		item.ellipse.set_angle_start(item.angle)
 		item.angle = (item.angle + self._step) % 360
 		item.ellipse.set_angle_end(item.angle)
+		item.rank = (item.rank + 1) % len(self._children)
 		x_start, y_start, x_end, y_end = item.scale.get_bounds()
 		depth_start, depth_end = item.depth.get_bounds()
-		if item.angle == 90:
+		if item.rank == 0:
 			item.scale.set_bounds(x_end, y_end, self._selected_scale, self._selected_scale)
 			item.depth.set_bounds(depth_end, self._selected_depth)
 		else:
 			item.scale.set_bounds(x_end, y_end, self._unselected_scale, self._unselected_scale)
 			item.depth.set_bounds(depth_end, self._unselected_depth)
+		self.__update_opacity(item)
 
 	def turn_item_left(self, item):
 		item.ellipse.set_direction(clutter.ROTATE_CCW)
 		item.ellipse.set_angle_start(item.angle)
 		item.angle = (item.angle - self._step) % 360
 		item.ellipse.set_angle_end(item.angle)
+		item.rank = (item.rank - 1) % len(self._children)
 		x_start, y_start, x_end, y_end = item.scale.get_bounds()
 		depth_start, depth_end = item.depth.get_bounds()
-		if item.angle == 90:
+		if item.rank == 0:
 			item.scale.set_bounds(x_end, y_end, self._selected_scale, self._selected_scale)
 			item.depth.set_bounds(depth_end, self._selected_depth)
 		else:
 			item.scale.set_bounds(x_end, y_end, self._unselected_scale, self._unselected_scale)
 			item.depth.set_bounds(depth_end, self._unselected_depth)
+		self.__update_opacity(item)
 
 	def next(self):
 		"""Select the next item.
@@ -143,6 +158,5 @@ class Carrousel(clutter.Group):
 			for child in self._children:
 				self.turn_item_left(child)
 			self._timeline.start()
-
 
 

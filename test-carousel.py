@@ -6,6 +6,7 @@ import glob, time
 import os.path
 from clutter import keysyms
 from pyclut.menus.carrousel import Carrousel
+from pyclut.effects.reflect import ReflectedItem
 global current
 current=1
 
@@ -35,13 +36,19 @@ def main(image_directory):
 		int(stage.get_height()-stage.get_height()/4),
 	)
 
-	carrousel = Carrousel(size=(512,512), item_size=(128,128))
+	carrousel = Carrousel(size=(512,512), item_size=(128,128), fade_ratio=50)
 	stage.add(carrousel)
 	n_items = len(item_images)
 	items = []
 	stage.show()
-	for image in item_images:
-		carrousel.add(clutter.Texture(image))
+	for rank, image in enumerate(item_images):
+		text = clutter.Text("Courrier New 24 px")
+		text.set_text("%d" % rank)
+		text.set_color(clutter.color_from_string("White"))
+		item = clutter.Group()
+		item.add(ReflectedItem(clutter.Texture(image)))
+		item.add(text)
+		carrousel.add(item)
 	carrousel.set_position(
 		stage.get_size()[0]/2-carrousel.get_size()[0]/2,
 		stage.get_size()[1]/2-carrousel.get_size()[1]/2
