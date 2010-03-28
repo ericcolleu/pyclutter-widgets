@@ -19,8 +19,8 @@ class ImageButton(clutter.Group):
 		self._released_background = released_background
 		self._released_background.set_opacity(255)
 		self._anim_factory = Animator(default_duration_ms=10)
-		self._show = self._anim_factory.createOpacityAnimation(255)
-		self._hide = self._anim_factory.createOpacityAnimation(0)
+		self._show = OpacityAnimation(255, 10, clutter.LINEAR)
+		self._hide = OpacityAnimation(0, 10, clutter.LINEAR)
 		self.add(self._pressed_background)
 		self.add(self._released_background)
 		self._released_background.connect("button-press-event", self._on_pressed)
