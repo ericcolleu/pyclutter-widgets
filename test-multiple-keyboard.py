@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import clutter
+from clutter import cogl
 
 from test import PyClutTest
 from pyclut.controls.keyboard import SimpleKeyboard, KeyboardLayout, PulseButtonFactory
@@ -18,7 +19,8 @@ class MultipleKeyboardTest(PyClutTest):
 		self._transition_names = transition_names or ["Rotate",]
 		self._transitions = {
 			"Slide" : (SlideTransition, {"zone_object" : self._stage,}),
-			"Rotate" : (RotateTransition, {"direction" : clutter.ROTATE_CW, "axis" : clutter.Y_AXIS},),
+			"Rotate" : (RotateTransition, {"direction" : clutter.ROTATE_CCW, "axis" : clutter.X_AXIS, "center" : (64, 64, -50), "style" : clutter.EASE_OUT_BOUNCE}),
+#   		"Rotate" : (RotateTransition, {"direction" : clutter.ROTATE_CW, "axis" : clutter.Y_AXIS},),
 			"Zoom" : (ZoomTransition, {},),
 			"Fade" : (FadeTransition, {},),
 		}
@@ -61,6 +63,7 @@ class MultipleKeyboardTest(PyClutTest):
 			self.current = "abc"
 
 	def run(self):
+		cogl.set_backface_culling_enabled(True)
 		self.keyboards = {}
 		key_map = [
 			["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"],

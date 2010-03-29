@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import clutter
+from clutter import cogl
 
 from test import PyClutTest
 from pyclut.effects.transitions import TransitionZone
@@ -20,7 +21,7 @@ class TransitionTest(PyClutTest):
 		self._transition_names = transition_names
 		self._transitions = {
 			"Slide" : (SlideTransition, {"zone_object" : self._stage,}),
-			"Rotate" : (RotateTransition, {"direction" : clutter.ROTATE_CW, "axis" : clutter.Y_AXIS, "center" : (64, 64, -50)}),
+			"Rotate" : (RotateTransition, {"direction" : clutter.ROTATE_CCW, "axis" : clutter.X_AXIS, "center" : (64, 64, -50), "style" : clutter.EASE_OUT_BOUNCE}),
 			"Zoom" : (ZoomTransition, {},),
 			"Fade" : (FadeTransition, {},),
 		}
@@ -43,6 +44,7 @@ class TransitionTest(PyClutTest):
 		return item
 
 	def run(self):
+		cogl.set_backface_culling_enabled(True)
 		self.objects = [self._create_item(self.get_image()) for rank in range(10)]
 		self.current = 0
 		self._stage.show()
