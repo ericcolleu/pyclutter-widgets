@@ -39,11 +39,35 @@ class Carrousel(clutter.Group):
 		else:
 			self._step = 0
 
-	def __update_opacity(self, item):
+	def __set_item_opacity(self, item):
 		if item.rank < (len(self._children) / 2):
-			item.set_opacity(max(10, 255-item.rank*self._fade_ratio))
+			item.opacity = clutter.BehaviourOpacity(
+				opacity_start=item.get_opacity(),
+				opacity_end=max(10, 255-item.rank*self._fade_ratio),
+				alpha=self._alpha
+			)
 		else:
-			item.set_opacity(max(10, 255-(len(self._children) - item.rank)*self._fade_ratio))
+			item.opacity = clutter.BehaviourOpacity(
+				opacity_start=item.get_opacity(),
+				opacity_end=max(10, 255-(len(self._children) - item.rank)*self._fade_ratio),
+				alpha=self._alpha
+			)
+		item.opacity.apply(item)
+
+	def __update_opacity(self, item):
+		if not hasattr(item, "opacity"):
+			self.__set_item_opacity(item)
+			return
+		if item.rank < (len(self._children) / 2):
+			item.opacity.set_bounds(
+				opacity_start=item.get_opacity(),
+				opacity_end=max(10, 255-item.rank*self._fade_ratio)
+			)
+		else:
+			item.opacity.set_bounds(
+				opacity_start=item.get_opacity(),
+				opacity_end=max(10, 255-(len(self._children) - item.rank)*self._fade_ratio)
+			)
 
 	def __update_item(self, item, angle, rank):
 		angle = clamp_angle(90+self._step*rank)
