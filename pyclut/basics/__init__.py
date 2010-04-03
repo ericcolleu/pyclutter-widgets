@@ -100,11 +100,11 @@ class Shape (clutter.Actor):
 		pass
 
 	def __draw_shape(self, width, height, color=None, texture=None):
-		self.do_draw_shape(width, height)
 		if texture:
 			cogl.set_source_texture(texture)
 		else:
 			cogl.set_source_color(color)
+		self.do_draw_shape(width, height)
 		cogl.path_fill()
 
 	def do_paint (self):
@@ -112,10 +112,8 @@ class Shape (clutter.Actor):
 		if self._texture:
 			self.__draw_shape(x2 - x1, y2 - y1, texture = self._texture.get_cogl_texture())
 		else:
-			paint_color = self._color
-			real_alpha = self.get_paint_opacity() * paint_color.alpha / 255
-			paint_color.alpha = real_alpha
-			self.__draw_shape(x2 - x1, y2 - y1, color = paint_color)
+			self._color.alpha = self.get_paint_opacity()
+			self.__draw_shape(x2 - x1, y2 - y1, color = self._color)
 
 	def do_pick (self, pick_color):
 		if self.should_pick_paint() == False:
