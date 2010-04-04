@@ -13,7 +13,9 @@ class AbstractAnimation(clutter.Behaviour):
 	def __init__(self, duration, style, timeline=None, alpha=None):
 		clutter.Behaviour.__init__(self)
 		self._timeline = timeline or clutter.Timeline(duration)
-		self._timeline.connect("completed", self._on_done)
+		if not hasattr(self, "connected"):
+			self._timeline.connect("completed", self._on_done)
+			self.connected = True
 		self._alpha = alpha or clutter.Alpha(self._timeline, style)
 		self._behaviours = []
 		self._actor = None
@@ -22,6 +24,7 @@ class AbstractAnimation(clutter.Behaviour):
 		raise AbstractMethodNotImplemented("Animation must implement a do_prepare_animation method")
 
 	def _on_done(self, timeline):
+		self._timeline.stop()
 		[behaviour.remove_all() for behaviour in self._behaviours]
 		self.emit("completed")
 
