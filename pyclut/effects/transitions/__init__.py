@@ -1,4 +1,6 @@
 import clutter
+import gobject
+from clutter import cogl
 from pyclut.animation import Animator
 
 class Direction:
@@ -20,8 +22,16 @@ class TransitionZone(object):
 	def get_position(self):
 		return self._x, self._y
 
-class Transition(object):
-	def __init__(self, zone_object, actor_in, actor_out, final_position, duration=100, style=clutter.LINEAR):
+class Transition(gobject.GObject):
+	__gtype_name__ = 'Transition'
+	__gsignals__ = {
+		'completed' : ( \
+		  gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, () \
+		),
+	}
+
+	def __init__(self, zone_object, actor_in, actor_out, final_position, duration=100, style=clutter.LINEAR, backface_culling=False):
+		gobject.GObject.__init__(self)
 		self._zone = zone_object
 		self._zone_size = self._zone.get_size()
 		self._zone_position = self._zone.get_position()
@@ -30,6 +40,8 @@ class Transition(object):
 		self._actor_out = actor_out
 		self._final_position = final_position
 		self._anim_factory = Animator()
+		self._backface_culling = backface_culling
+		self._saved_cull = cogl.get_backface_culling_enabled()
 
 	def preset_position(self):
 		pass
@@ -38,6 +50,8 @@ class Transition(object):
 		pass
 
 	def start(self):
+		self._saved_cull = cogl.get_backface_culling_enabled()
+		cogl.set_backface_culling_enabled(self._backface_culling)
 		self.preset_position()
 		self._actor_in.show()
 		anim_in, anim_out = self.create_animations()
@@ -48,7 +62,9 @@ class Transition(object):
 		anim_out.start()
 
 	def _on_anim_completed(self, event):
+		cogl.set_backface_culling_enabled(self._saved_cull)
 		self._actor_out.hide()
+		self.emit("completed")
 
 
 
