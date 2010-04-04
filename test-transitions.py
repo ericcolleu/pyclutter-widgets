@@ -6,7 +6,7 @@ from clutter import cogl
 from test import PyClutTest
 from pyclut.effects.transitions import TransitionZone
 from pyclut.effects.transitions.slide import SlideTransition
-from pyclut.effects.transitions.rotate import RotateTransition
+from pyclut.effects.transitions.rotate import RotateTransition, FlapTransition
 from pyclut.effects.transitions.zoom import ZoomTransition
 from pyclut.effects.transitions.fade import FadeTransition
 from pyclut.menus.carrousel import Carrousel
@@ -22,6 +22,7 @@ class TransitionTest(PyClutTest):
 		self._transitions = {
 			"Slide" : (SlideTransition, {"zone_object" : self._stage,}),
 			"Rotate" : (RotateTransition, {"direction" : clutter.ROTATE_CCW, "axis" : clutter.X_AXIS, "center" : (64, 64, -50), "style" : clutter.EASE_OUT_BOUNCE}),
+			"Flap" : (FlapTransition, {},),
 			"Zoom" : (ZoomTransition, {},),
 			"Fade" : (FadeTransition, {},),
 		}
