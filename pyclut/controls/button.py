@@ -88,8 +88,6 @@ class PulseButton(clutter.Group):
 			self.text = clutter.Text("courrier new 24px", text)
 			self.text.set_anchor_point_from_gravity(clutter.GRAVITY_CENTER)
 			self.add(self.text)
-			x, y = self.get_position()
-			#self.text.set_position(x + self.text.get_width()/2, y + self.get_height()/2)
 		self._background.connect("button-press-event", self._on_pressed)
 		self._background.set_reactive(True)
 
