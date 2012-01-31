@@ -5,8 +5,9 @@ import clutter
 import glob, time
 import os.path
 from clutter import keysyms
-from pyclut.menus.carrousel import Carrousel
+from pyclut.menus.carrousel import Carrousel, TextCarrousel
 from pyclut.effects.reflect import ReflectedItem
+from pyclut.basics.rectangle import RoundRectangle
 global current
 current=1
 
@@ -19,6 +20,10 @@ def on_input(stage, event, carrousel, item_images):
 	elif event.keyval == keysyms.a:
 		carrousel.add(clutter.Texture(item_images[current]))
 		current = (current + 1) % len(item_images)
+	elif event.keyval == keysyms.s:
+		carrousel.show()
+	elif event.keyval == keysyms.h:
+		carrousel.hide()
 	elif event.keyval == keysyms.q:
 		clutter.main_quit()
 
@@ -35,24 +40,52 @@ def main(image_directory):
 		int(stage.get_width()/2),
 		int(stage.get_height()-stage.get_height()/4),
 	)
-
-	carrousel = Carrousel(size=(512,512), item_size=(128,128), fade_ratio=50)
+#	text_selector = RoundRectangle()
+#	text_selector.set_color("Blue")
+#	text_selector.set_opacity(150)
+#	text_selector.set_size(200, 40)
+#	texts = [
+#		"Item0",
+#		"Item1",
+#		"Item2",
+#		"Item3",
+#		"Item4",
+#		"Item5",
+#		"Item6",
+#		"Item7",
+#	]
+	carrousel = Carrousel(size=(512,512), item_size=(128,128), fade_ratio=50, tilt=(60.0, 0.0, 0.0))
+#	textcarrousel = TextCarrousel(
+#		font="Trebuchet MS 24",
+#		item_color="White",
+#		selected_item_color="Black",
+#		size=(256,256),
+#		item_size=(256,256),
+#		fade_ratio=60,
+#		tilt=(0.0, 270.0, 90.0),
+#		children=texts
+#	)
 	stage.add(carrousel)
+#	stage.add(textcarrousel)
+#	stage.add(text_selector)
 	n_items = len(item_images)
 	items = []
 	stage.show()
 	for rank, image in enumerate(item_images):
-		text = clutter.Text("Courrier New 24 px")
-		text.set_text("%d" % rank)
-		text.set_color(clutter.color_from_string("White"))
+#		text = clutter.Text("Courrier New 24 px")
+#		text.set_text("%d" % rank)
+#		text.set_color(clutter.Color.from_string("White"))
 		item = clutter.Group()
 		item.add(ReflectedItem(clutter.Texture(image)))
-		item.add(text)
+#		item.add(text)
 		carrousel.add(item)
+
 	carrousel.set_position(
 		stage.get_size()[0]/2-carrousel.get_size()[0]/2,
 		stage.get_size()[1]/2-carrousel.get_size()[1]/2
 	)
+#	textcarrousel.set_position(700, 300)
+#	text_selector.set_position(700, 300)
 	stage.connect('key-press-event', on_input, carrousel, item_images)
 	clutter.main()
 

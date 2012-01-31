@@ -1,8 +1,4 @@
-import sys
-import gobject
-import clutter
-
-from clutter import cogl
+from gi.repository import Cogl, GObject
 from pyclut.basics import Shape
 
 class SixBranchStar (Shape):
@@ -11,19 +7,19 @@ class SixBranchStar (Shape):
 	__gtype_name__ = 'SixBranchStar'
 
 	def do_draw_shape(self, width, height):
-		cogl.path_move_to(0, height/4)
-		cogl.path_line_to(width, height/4)
-		cogl.path_line_to(width/2, height)
-		cogl.path_line_to(0, height/4)
+		Cogl.path_move_to(0, height/4)
+		Cogl.path_line_to(width, height/4)
+		Cogl.path_line_to(width/2, height)
+		Cogl.path_line_to(0, height/4)
 
-		cogl.path_move_to(0, height*3/4)
-		cogl.path_line_to(width, height*3/4)
-		cogl.path_line_to(width/2, 0)
-		cogl.path_line_to(0, height*3/4)
+		Cogl.path_move_to(0, height*3/4)
+		Cogl.path_line_to(width, height*3/4)
+		Cogl.path_line_to(width/2, 0)
+		Cogl.path_line_to(0, height*3/4)
 
-		cogl.path_close()
+		Cogl.path_close()
 
 
-gobject.type_register(SixBranchStar)
+GObject.type_register(SixBranchStar)
 
 

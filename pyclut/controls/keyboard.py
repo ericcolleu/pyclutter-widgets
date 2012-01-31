@@ -1,6 +1,5 @@
-import clutter
-import gobject
-from pyclut.controls.button import TextButton, PulseButton
+from gi.repository import Clutter, GObject
+from pyclut.controls.button import PulseButton
 from pyclut.basics.rectangle import RoundRectangle
 
 class Key(object):
@@ -15,12 +14,12 @@ class Key(object):
 
 	def __call__(self, *args, **kwargs):
 		if self.value:
-			return value
+			return self.value
 		return self.text
 
 class LayoutSwitcher(Key):
 	def __init__ (self, switch_to_layout, value=None, text=None):
-		SpecialKey.__init__(self, value, text)
+		Key.__init__(self, value, text)
 		self.switch_to_layout = switch_to_layout
 
 class KeyFactory(object):
@@ -53,19 +52,19 @@ class PulseButtonFactory(object):
 
 	def get_button(self, text=None, value=None):
 		if self._background:
-			background=clutter.Texture(self._background)
+			background=Clutter.Texture(self._background)
 		else:
-			background=clutter.RoundRectangle()
+			background=Clutter.RoundRectangle()
 			background.set_color(self._color or "White")
 		return PulseButton(background, text=text, value=value)
 
-class KeyRowLayout(clutter.Group):
+class KeyRowLayout(Clutter.Group):
 	__gtype_name__ = 'KeyRowLayout'
 	__gsignals__ = {
-		'key-pressed' : ( gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,) ),
+		'key-pressed' : ( GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (GObject.TYPE_PYOBJECT,) ),
 	}
 	def __init__(self, keys, button_factory=None, button_size=(75,75), inter_button_space=0):
-		clutter.Group.__init__(self)
+		Clutter.Group.__init__(self)
 		x, y = 0, 0
 		for key in keys:
 			button=button_factory.get_button(text=str(key), value=key)
@@ -78,15 +77,15 @@ class KeyRowLayout(clutter.Group):
 	def _on_pressed(self, event, key):
 		self.emit("key-pressed", key)
 
-class SimpleKeyboard(clutter.Group):
+class SimpleKeyboard(Clutter.Group):
 	__gtype_name__ = 'SimpleKeyboard'
 	__gsignals__ = {
-		'key-pressed' : ( gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,) ),
+		'key-pressed' : ( GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, (GObject.TYPE_PYOBJECT,) ),
 	}
 
 	def __init__(self, layout=None, background=None, button_factory=None,
 		button_size=(75,75), inter_button_space=0):
-		clutter.Group.__init__(self)
+		Clutter.Group.__init__(self)
 		self._layout = layout
 		self._button_size = button_size
 		self._inter_button_space = inter_button_space

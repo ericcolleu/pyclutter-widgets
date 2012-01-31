@@ -1,9 +1,9 @@
-import clutter
+from gi.repository import Clutter
 from pyclut.effects.transitions import Transition, Direction
 from pyclut.animation import MoveAnimation
 
 class SlideTransition(Transition):
-	def __init__(self, actor_in, actor_out, zone_object, in_direction=Direction.LEFT, out_direction=Direction.LEFT, final_position=None, duration=500, style=clutter.LINEAR):
+	def __init__(self, actor_in, actor_out, zone_object, in_direction=Direction.LEFT, out_direction=Direction.LEFT, final_position=None, duration=500, style=Clutter.AnimationMode.LINEAR):
 		Transition.__init__(self, zone_object, actor_in, actor_out, final_position, duration=duration, style=style)
 		self._in_direction = in_direction
 		self._out_direction = out_direction

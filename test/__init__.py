@@ -8,7 +8,7 @@ class PyClutTest(object):
 		self._stage = clutter.Stage()
 		self._stage.set_size(*resolution)
 		self._stage.connect('destroy', clutter.main_quit)
-		self._stage.set_color(clutter.color_from_string(background_color or "Black"))
+		self._stage.set_color(clutter.Color.from_string(background_color or "Black"))
 		self._stage.set_title(self.__class__.__name__)
 		self._stage.show()
 		self.item_images = glob.glob(os.path.join(image_directory, "*.png"))

@@ -30,7 +30,7 @@ class Transition(gobject.GObject):
 		),
 	}
 
-	def __init__(self, zone_object, actor_in, actor_out, final_position, duration=100, style=clutter.LINEAR, backface_culling=False):
+	def __init__(self, zone_object, actor_in, actor_out, final_position, duration=100, style=clutter.AnimationMode.LINEAR, backface_culling=False):
 		gobject.GObject.__init__(self)
 		self._zone = zone_object
 		self._zone_size = self._zone.get_size()

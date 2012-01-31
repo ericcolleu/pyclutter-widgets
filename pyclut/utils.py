@@ -1,4 +1,3 @@
-import clutter
 
 def clamp(x, min=0, max=1):
 	if x>max: return max

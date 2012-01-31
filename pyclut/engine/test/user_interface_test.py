@@ -37,6 +37,17 @@ class UserInterfaceTestCase(unittest.TestCase):
 		self.failUnlessEqual(screens, ui.get_screens())
 		self.failUnlessEqual(len(screen_names), ui.get_nb_screen())
 
+	def __prepare_ui_with_config(self, resolution=(800, 600), screens=None):
+		self._mock_config.get_resolution().AndReturn(resolution)
+		self._mock_config.get_screens().AndReturn(screens)
+
+		mox.Replay(self._mock_config)
+		ui = UserInterface(
+			config = self._mock_config,
+		)
+		mox.Reset(self._mock_config)
+		return ui
+
 	def test_ui_creation_03(self):
 		"""UserInterface : creation, check with configuration"""
 		resolution = (800, 600)
@@ -44,16 +55,19 @@ class UserInterfaceTestCase(unittest.TestCase):
 		screens = {}
 		for name in screen_names:
 			screens[name] = "something" #self.mox_factory.CreateMockAnything()
-		self._mock_config.get_resolution().AndReturn(resolution)
-		self._mock_config.get_screens().AndReturn(screens)
-
-		self.mox_factory.ReplayAll()
-		ui = UserInterface(
-			config = self._mock_config,
-		)
+		ui = self.__prepare_ui_with_config(resolution, screens)
 		self.failUnlessEqual(resolution, ui.get_resolution())
 		self.failUnlessEqual(screens, ui.get_screens())
 		self.failUnlessEqual(len(screen_names), ui.get_nb_screen())
+
+	def test_screen_creation_01(self):
+		"""UserInterface : create screen from config"""
+		resolution = (800, 600)
+		screen_names = ["first", "second"]
+		screens = {}
+		for name in screen_names:
+			screens[name] = self.mox_factory.CreateMockAnything()
+		ui = self.__prepare_ui_with_config(resolution, screens)
 
 if __name__ == "__main__":
 	unittest.main()

@@ -1,12 +1,9 @@
 
 
 import sys
-import gobject
-import clutter
+from gi.repository import Clutter, Cogl, GObject
 
-from clutter import cogl
-
-class Shape (clutter.Actor):
+class Shape (Clutter.Actor):
 	"""Base abstract class to create custom shapes.
 	A shape can be filled with a color or a texture,
 	and emit the 'clicked' signal when mouse button is released on it.
@@ -14,22 +11,23 @@ class Shape (clutter.Actor):
 	__gtype_name__ = 'Shape'
 	__gproperties__ = {
 	  'color' : ( \
-		str, 'color', 'Color', None, gobject.PARAM_READWRITE \
+		str, 'color', 'Color', None, GObject.PARAM_READWRITE \
 	  ),
 	  'texture' : ( \
-		str, 'texture', 'Texture', None, gobject.PARAM_READWRITE \
+		str, 'texture', 'Texture', None, GObject.PARAM_READWRITE \
 	  ),
 	}
 	__gsignals__ = {
 		'clicked' : ( \
-		  gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, () \
+		  GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, () \
 		),
 	}
 
-	def __init__ (self):
-		clutter.Actor.__init__(self)
-		self._color = clutter.color_from_string('White')
-		self._texture = None
+	def __init__ (self, texture=None, color=None):
+		Clutter.Actor.__init__(self)
+		self._color = Clutter.Color.from_string(color or 'White')
+		print 50* "*", self._color
+		self._texture = texture
 		self._is_pressed = False
 		self.connect('button-press-event', self.do_button_press_event)
 		self.connect('button-release-event', self.do_button_release_event)
@@ -37,29 +35,30 @@ class Shape (clutter.Actor):
 
 	def set_color(self, color):
 		"""Fill the shape with the color given in parameter.
-		color may be a clutter.Color object or a string representing
+		color may be a Clutter.Color object or a string representing
 		the color name.
 		"""
-		if isinstance(color, clutter.Color):
+		if isinstance(color, Clutter.Color):
 			self._color = color
 		else:
-			self._color = clutter.color_from_string(color)
+			self._color = Clutter.Color.from_string(color)
+		print 50* "+", self._color
 
 	def set_texture(self, image):
 		"""Fill the shape with a texture given in parameter.
-		image may be a clutter.Texture object or a string
+		image may be a Clutter.Texture object or a string
 		representing the texture file path.
 		"""
-		if isinstance(image, clutter.Texture):
+		if isinstance(image, Clutter.Texture):
 			self._texture = image
 		else:
-			self._texture = clutter.Texture(image)
+			self._texture = Clutter.Texture(image)
 
 	def do_set_property (self, pspec, value):
 		if pspec.name == 'color':
-			self._color = clutter.color_from_string(value)
+			self._color = self.set_color(value)
 		elif pspec.name == 'texture':
-			self._color = clutter.Texture(value)
+			self._color = Clutter.Texture(value)
 		else:
 			raise TypeError('Unknown property ' + pspec.name)
 
@@ -74,7 +73,7 @@ class Shape (clutter.Actor):
 	def do_button_press_event (self, actor, event):
 		if event.button == 1:
 			self._is_pressed = True
-			clutter.grab_pointer(self)
+			Clutter.grab_pointer(self)
 			return True
 		else:
 			return False
@@ -82,7 +81,7 @@ class Shape (clutter.Actor):
 	def do_button_release_event (self, actor, event):
 		if event.button == 1 and self._is_pressed == True:
 			self._is_pressed = False
-			clutter.ungrab_pointer()
+			Clutter.ungrab_pointer()
 			self.emit('clicked')
 			return True
 		else:
@@ -91,7 +90,7 @@ class Shape (clutter.Actor):
 	def do_leave_event (self, actor, event):
 		if self._is_pressed == True:
 			self._is_pressed = False
-			clutter.ungrab_pointer()
+			Clutter.ungrab_pointer()
 			return True
 		else:
 			return False
@@ -100,12 +99,13 @@ class Shape (clutter.Actor):
 		pass
 
 	def __draw_shape(self, width, height, color=None, texture=None):
+		print 50*"-", color
 		if texture:
-			cogl.set_source_texture(texture)
+			Cogl.set_source_texture(texture)
 		else:
-			cogl.set_source_color(color)
+			Cogl.set_source_color(color)
 		self.do_draw_shape(width, height)
-		cogl.path_fill()
+		Cogl.path_fill()
 
 	def do_paint (self):
 		(x1, y1, x2, y2) = self.get_allocation_box()
@@ -124,6 +124,9 @@ class Shape (clutter.Actor):
 
 	def do_clicked (self):
 		print "Clicked!"
+
+	def do_destroy(self):
+		self.unparent()
 
 
 

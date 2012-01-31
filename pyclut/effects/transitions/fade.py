@@ -1,9 +1,9 @@
-import clutter
+from gi.repository import Clutter
 from pyclut.effects.transitions import Transition, Direction
 from pyclut.animation import OpacityAnimation
 
 class FadeTransition(Transition):
-	def __init__(self, actor_in, actor_out, final_position=None, duration=500, style=clutter.LINEAR):
+	def __init__(self, actor_in, actor_out, final_position=None, duration=500, style=Clutter.AnimationMode.LINEAR):
 		Transition.__init__(self, actor_out, actor_in, actor_out, final_position=final_position or actor_in.get_position(), duration=duration, style=style)
 		self._duration = duration
 		self._style = style

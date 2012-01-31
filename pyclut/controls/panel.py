@@ -1,14 +1,14 @@
-import clutter
+from gi.repository import Clutter
 
 
-class Panel(clutter.Group):
+class Panel(Clutter.Group):
 	__gtype_name__ = 'Panel'
 
 	def __init__(self, size, background, *children):
-		clutter.Group.__init__(self)
+		Clutter.Group.__init__(self)
 		if type(background) is str:
-			self._background = clutter.Rectangle()
-			self._background.set_color(clutter.color_from_string(background))
+			self._background = Clutter.Rectangle()
+			self._background.set_color(Clutter.Color.from_string(background))
 		else:
 			self._background = background
 		self._background.set_size(*size)
@@ -16,6 +16,18 @@ class Panel(clutter.Group):
 		if children:
 			self.add(*children)
 
+	def show(self):
+		print "show panel"
+		Clutter.Group.show(self)
+		for i in range(self.get_n_children()):
+			self.get_nth_child(i).show()
+		
+	def hide(self):
+		print "hide panel"
+		Clutter.Group.hide(self)
+		for i in range(self.get_n_children()):
+			self.get_nth_child(i).hide()
+		
 	def get_background(self):
 		return self._background
 
