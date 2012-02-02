@@ -168,7 +168,7 @@ class ScaleAndFadeAnimation(ScaleAnimation, OpacityAnimation):
 		return behaviours
 
 class Animator(object):
-	def __init__(self, default_duration_ms=500, default_style=Clutter.AnimationMode.AnimationMode.LINEAR):
+	def __init__(self, default_duration_ms=500, default_style=Clutter.AnimationMode.LINEAR):
 		self._default_duration = default_duration_ms
 		self._default_style = default_style
 		self._behaviours = {}
@@ -184,7 +184,7 @@ class Animator(object):
 			style or self._default_style,
 		)
 
-	def createRotateAnimation(self, angle, axis=Clutter.RotateAxis.AlignAxis.Y_AXIS, direction=Clutter.RotateDirection.CW, duration_ms=None, style=None):
+	def createRotateAnimation(self, angle, axis=Clutter.RotateAxis.Y_AXIS, direction=Clutter.RotateDirection.CW, duration_ms=None, style=None):
 		return RotateAnimation(
 			angle,
 			axis,
