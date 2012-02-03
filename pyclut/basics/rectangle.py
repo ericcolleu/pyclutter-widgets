@@ -1,5 +1,8 @@
 import sys
-from gi.repository import Cogl, GObject
+import gobject
+import clutter
+
+from clutter import cogl
 from pyclut.basics import Shape
 
 class RoundRectangle(Shape):
@@ -9,20 +12,8 @@ class RoundRectangle(Shape):
 	"""
 	__gtype_name__ = 'RoundRectangle'
 	__gproperties__ = {
-		'color' : (
-			str, 'color', 'Color', None, GObject.PARAM_READWRITE
-		),
-		'radius': (
-			GObject.TYPE_INT, 'Radius', 'Radius of the round angles',
-			0, sys.maxint, 0, GObject.PARAM_READWRITE
-		),
-		'border_color': (
-			str, 'border color', 'Border color', None, GObject.PARAM_READWRITE
-		),
-		'border_width' : (
-			GObject.TYPE_FLOAT, 'border width', 'Border width',
-			0.0, sys.maxint, 0.0, GObject.PARAM_READWRITE
-		),
+	  'radius' : (gobject.TYPE_INT, 'Radius', 'Rectangle rounded corner radius',
+                0, 1, 0, gobject.PARAM_READWRITE),
 	}
 	def __init__ (self):
 		Shape.__init__(self)
@@ -36,7 +27,7 @@ class RoundRectangle(Shape):
 
 	def do_set_property (self, pspec, value):
 		if pspec.name == 'radius':
-			self.set_radius(value)
+			self._radius = value
 		else:
 			raise TypeError('Unknown property ' + pspec.name)
 
@@ -47,12 +38,12 @@ class RoundRectangle(Shape):
 			raise TypeError('Unknown property ' + pspec.name)
 
 	def do_draw_shape(self, width, height):
-		Cogl.path_round_rectangle (0, 0, width, height, self._radius, 5)
+		cogl.path_round_rectangle (0, 0, width, height, self._radius, 5)
 
-		Cogl.path_close()
+		cogl.path_close()
 
 
-GObject.type_register(RoundRectangle)
+gobject.type_register(RoundRectangle)
 
 
 

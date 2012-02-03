@@ -1,9 +1,9 @@
-from gi.repository import Clutter
+import clutter
 from pyclut.effects.transitions import Transition, Direction
 from pyclut.animation import ScaleAndFadeAnimation
 
 class ZoomTransition(Transition):
-	def __init__(self, actor_in, actor_out, duration=500, style=Clutter.AnimationMode.LINEAR):
+	def __init__(self, actor_in, actor_out, duration=500, style=clutter.LINEAR):
 		Transition.__init__(self, actor_out, actor_in, actor_out, final_position=actor_out.get_position(), duration=duration, style=style)
 		self._duration = duration
 		self._style = style

@@ -1,4 +1,5 @@
-from gi.repository import Clutter
+import clutter
+from pyclut.effects.reflect import ReflectedItem
 from pyclut.animation import MoveAnimation, RotateAnimation, ScaleAnimation, DepthAnimation
 from pyclut.utils import clamp_angle
 
@@ -18,7 +19,7 @@ class CoverflowItemAnimation(MoveAnimation, RotateAnimation, ScaleAnimation, Dep
 		behaviours.extend(DepthAnimation.do_prepare_animation(self))
 		return behaviours
 
-class Coverflow(Clutter.Group):
+class Coverflow(clutter.Group):
 	"""Coverflow menu is a list of items on a line rotated if not selected."""
 	__gtype_name__ = 'Coverflow'
 	def __init__(self, x=0, y=0, size=(512, 128), item_size=(128, 128), angle=70, inter_item_space=50, selection_depth=200, *children):
@@ -32,7 +33,7 @@ class Coverflow(Clutter.Group):
 		selection_depth : selected item is bring to front (default is 200)
 		children : optional list of item to add to the menu.
 		"""
-		Clutter.Group.__init__(self)
+		clutter.Group.__init__(self)
 		self._x = x
 		self._y = y
 		self._width = size[0]
@@ -47,29 +48,13 @@ class Coverflow(Clutter.Group):
 		if children:
 			self.add(*children)
 
-	def show(self):
-		self.set_scale(0, 0)
-		Clutter.Group.show(self)
-		anim = ScaleAnimation(scale_x=1.0, scale_y=1.0, duration=1000, style=Clutter.EASE_OUT_BACK)
-		anim.apply(self)
-		anim.start()
-
-	def hide(self):
-		anim = ScaleAnimation(scale_x=0.0, scale_y=0.0, duration=1000, style=Clutter.EASE_IN_BACK)
-		anim.apply(self)
-		anim.connect("completed",  self.do_hide)
-		anim.start()
-
-	def do_hide(self, *args):
-		Clutter.Group.hide(self)
-
 	def add(self, *children):
 		"""Add a list of items to the coverflow menu.
 		coverflow.add(item1, item2, item3) -> return None
 		"""
 		[child.set_size(*self._item_size) for child in children]
 		self.do_add(*children)
-		Clutter.Group.add(self, *children)
+		clutter.Group.add(self, *children)
 
 	def do_add(self, *children):
 		for child in children:
@@ -77,7 +62,7 @@ class Coverflow(Clutter.Group):
 		self.__update_items_position()
 
 	def remove(self, *children):
-		Clutter.Group.remove(self, *children)
+		clutter.Group.remove(self, *children)
 		self.do_remove(*children)
 
 	def do_remove(self, *children):
@@ -90,17 +75,17 @@ class Coverflow(Clutter.Group):
 		anim = CoverflowItemAnimation(
 			destination=(destination, self._y),
 			angle=angle,
-			axis=Clutter.AlignAxis.Y_AXIS,
+			axis=clutter.Y_AXIS,
 			direction=direction,
 			scale=1.0,
 			depth=depth,
 			duration=100,
-			style=Clutter.EASE_IN_OUT_SINE
+			style=clutter.EASE_IN_OUT_SINE
 		)
 		anim.apply(item)
 		return anim
 
-	def __update_items_position(self, selected_rotation=Clutter.RotateDirection.CW):
+	def __update_items_position(self, selected_rotation=clutter.ROTATE_CW):
 		center_x = self._x + self._width/2
 		anims=[]
 		for index, item in enumerate(self._children[:self._selected]):
@@ -108,7 +93,7 @@ class Coverflow(Clutter.Group):
 				item=item,
 				destination=(center_x - (self._item_size[0]/2) - (self._inter_item_space*((self._selected-index)+1))),
 				angle=self._angle,
-				direction=Clutter.RotateDirection.CW,
+				direction=clutter.ROTATE_CW,
 				depth=0.0))
 
 		anims.append(self.__apply_animation(
@@ -124,7 +109,7 @@ class Coverflow(Clutter.Group):
 					item=item,
 					destination=(center_x + (self._item_size[0]/2) + (self._inter_item_space*(index+1))),
 					angle=360-self._angle,
-					direction=Clutter.RotateDirection.CCW,
+					direction=clutter.ROTATE_CCW,
 					depth=0.0))
 		anims[-1].connect("completed", self._on_anim_completed)
 		[anim.start() for anim in anims]
@@ -139,7 +124,7 @@ class Coverflow(Clutter.Group):
 		if self.get_reactive():
 			self.set_reactive(False)
 			self._selected = min(self._selected + 1,len(self._children)-1)# % len(self._children)
-			self.__update_items_position(Clutter.RotateDirection.CW)
+			self.__update_items_position(clutter.ROTATE_CW)
 
 	def previous(self):
 		"""Select the previous item.
@@ -148,7 +133,7 @@ class Coverflow(Clutter.Group):
 		if self.get_reactive():
 			self.set_reactive(False)
 			self._selected = max(self._selected - 1, 0)# % len(self._children)
-			self.__update_items_position(Clutter.RotateDirection.CCW)
+			self.__update_items_position(clutter.ROTATE_CCW)
 
 	def get_selected(self):
 		"""Return the rank of the selected item.

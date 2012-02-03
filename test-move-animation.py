@@ -10,7 +10,7 @@ class MoveAnimationTest(PyClutTest):
 		PyClutTest.__init__(self, *args, **kwargs)
 
 	def on_button_press(self, stage, event):
-		anim = MoveAnimation((event.x, event.y), 500, clutter.AnimationMode.LINEAR)
+		anim = MoveAnimation((event.x, event.y), 500, clutter.LINEAR)
 		anim.connect("completed", self._on_done)
 		anim.apply(self.item)
 		anim.start()

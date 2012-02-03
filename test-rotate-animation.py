@@ -10,7 +10,7 @@ class MoveAnimationTest(PyClutTest):
 		PyClutTest.__init__(self, *args, **kwargs)
 
 	def on_button_press(self, stage, event):
-		anim = CenteredRotateAnimation(360, clutter.AlignAxis.Y_AXIS, clutter.RotateDirection.CW, 500, clutter.AnimationMode.LINEAR)
+		anim = CenteredRotateAnimation(360, clutter.Y_AXIS, clutter.ROTATE_CW, 500, clutter.LINEAR)
 		anim.connect("completed", self._on_done)
 		anim.apply(self.item)
 		anim.start()

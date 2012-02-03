@@ -1,21 +1,22 @@
-from gi.repository import Clutter, GObject
+import clutter
+import gobject
 from pyclut.utils import clamp_angle, AbstractMethodNotImplemented
 
-class AbstractAnimation(Clutter.Behaviour):
+class AbstractAnimation(clutter.Behaviour):
 	__gtype_name__ = 'AbstractAnimation'
 	__gsignals__ = {
 		'completed' : ( \
-		GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, () \
+		  gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, () \
 		),
 	}
 
 	def __init__(self, duration, style, timeline=None, alpha=None):
-		Clutter.Behaviour.__init__(self)
-		self._timeline = timeline or Clutter.Timeline.new(duration)
+		clutter.Behaviour.__init__(self)
+		self._timeline = timeline or clutter.Timeline(duration)
 		if not hasattr(self, "connected"):
 			self._timeline.connect("completed", self._on_done)
 			self.connected = True
-		self._alpha = alpha or Clutter.Alpha.new_full(self._timeline, style)
+		self._alpha = alpha or clutter.Alpha(self._timeline, style)
 		self._behaviours = []
 		self._actor = None
 
@@ -46,8 +47,8 @@ class MoveAnimation(AbstractAnimation):
 
 	def do_prepare_animation(self):
 		start_x, start_y = self._actor.get_position()
-		path = Clutter.Path("M %s %s L %s %s" % (start_x, start_y, self._destination[0], self._destination[1]))
-		behaviours = [Clutter.BehaviourPath(alpha=self._alpha, path=path),]
+		path = clutter.Path("M %s %s L %s %s" % (start_x, start_y, self._destination[0], self._destination[1]))
+		behaviours = [clutter.BehaviourPath(alpha=self._alpha, path=path),]
 		return behaviours
 
 class CenteredRotateAnimation(AbstractAnimation):
@@ -58,15 +59,15 @@ class CenteredRotateAnimation(AbstractAnimation):
 		self._direction = direction
 
 	def do_prepare_animation(self):
-		behaviour = Clutter.BehaviourRotate(
+		behaviour = clutter.BehaviourRotate(
 			axis=self._axis,
 			angle_start=clamp_angle(self._actor.get_rotation(self._axis)[0]),
 			angle_end=clamp_angle(self._angle),
 			alpha=self._alpha,
 			direction=self._direction)
-		if self._axis == Clutter.RotateAxis.AlignAxis.Y_AXIS:
+		if self._axis == clutter.Y_AXIS:
 			behaviour.set_center(int(self._actor.get_width()/2), 0, 0)
-		elif self._axis == Clutter.AlignAxis.X_AXIS:
+		elif self._axis == clutter.X_AXIS:
 			behaviour.set_center(0, int(self._actor.get_height()/2), 0)
 		return [behaviour,]
 
@@ -79,7 +80,7 @@ class RotateAnimation(AbstractAnimation):
 		self._center = center
 
 	def do_prepare_animation(self):
-		behaviour = Clutter.BehaviourRotate(
+		behaviour = clutter.BehaviourRotate(
 			axis=self._axis,
 			angle_start=clamp_angle(self._actor.get_rotation(self._axis)[0]),
 			angle_end=clamp_angle(self._angle),
@@ -107,7 +108,7 @@ class ScaleAnimation(AbstractAnimation):
 
 	def do_prepare_animation(self):
 		(cur_scale_x, cur_scale_y) = self._actor.get_scale()
-		return [Clutter.BehaviourScale(
+		return [clutter.BehaviourScale(
 			x_scale_start=cur_scale_x,
 			y_scale_start=cur_scale_y,
 			x_scale_end=self._scale_x,
@@ -120,7 +121,7 @@ class OpacityAnimation(AbstractAnimation):
 		self._opacity = opacity
 
 	def do_prepare_animation(self):
-		return [Clutter.BehaviourOpacity(
+		return [clutter.BehaviourOpacity(
 			opacity_start=self._actor.get_opacity(),
 			opacity_end=self._opacity,
 			alpha=self._alpha),]
@@ -134,15 +135,14 @@ class TurnAroundAnimation(AbstractAnimation):
 		self._tilt = tilt
 
 	def do_prepare_animation(self):
-		behaviour = Clutter.BehaviourEllipse.new(
-			self._alpha,
-			self._center[0],
-			self._center[1],
-			self._radius*2,
-			self._radius*2,
-			Clutter.RotateDirection.CW,
-			0,
-			self._angle)
+		behaviour = clutter.BehaviourEllipse(
+			alpha=self._alpha,
+			x=self._center[0],
+			y=self._center[1],
+			width=self._radius*2,
+			height=self._radius*2,
+			start=360,
+			end=self._angle)
 		behaviour.set_tilt(*self._tilt)
 		return [behaviour,]
 
@@ -152,7 +152,7 @@ class DepthAnimation(AbstractAnimation):
 		self._depth = depth
 
 	def do_prepare_animation(self):
-		return [Clutter.BehaviourDepth(
+		return [clutter.BehaviourDepth(
 			alpha=self._alpha,
 			depth_start=int(self._actor.get_depth()),
 			depth_end=self._depth),]
@@ -168,7 +168,7 @@ class ScaleAndFadeAnimation(ScaleAnimation, OpacityAnimation):
 		return behaviours
 
 class Animator(object):
-	def __init__(self, default_duration_ms=500, default_style=Clutter.AnimationMode.LINEAR):
+	def __init__(self, default_duration_ms=500, default_style=clutter.LINEAR):
 		self._default_duration = default_duration_ms
 		self._default_style = default_style
 		self._behaviours = {}
@@ -184,7 +184,7 @@ class Animator(object):
 			style or self._default_style,
 		)
 
-	def createRotateAnimation(self, angle, axis=Clutter.RotateAxis.Y_AXIS, direction=Clutter.RotateDirection.CW, duration_ms=None, style=None):
+	def createRotateAnimation(self, angle, axis=clutter.Y_AXIS, direction=clutter.ROTATE_CW, duration_ms=None, style=None):
 		return RotateAnimation(
 			angle,
 			axis,
@@ -225,9 +225,9 @@ class Animator(object):
 			style or self._default_style,
 		)
 
-	def turn_around(self, actor, center, ellipse_width, ellipse_height, angle, tilt=None, direction=Clutter.RotateDirection.CW, timeline=None, alpha=None):
+	def turn_around(self, actor, center, ellipse_width, ellipse_height, angle, tilt=None, direction=clutter.ROTATE_CW, timeline=None, alpha=None):
 		timeline, alpha = self._get_timeline_and_alpha(timeline, alpha)
-		behavior = Clutter.BehaviourEllipse(
+		behavior = clutter.BehaviourEllipse(
 			alpha,
 			center[0],
 			center[1],
