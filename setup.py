@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
 	name='pyclut',
-	version='0.1',
+	version='0.2',
 	description='pyclutter widgets library',
 	author='Eric Colleu',
 	author_email='eric.colleu@gmail.com',
