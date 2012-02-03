@@ -8,15 +8,10 @@ from clutter import keysyms
 from pyclut.basics.star import SixBranchStar
 from pyclut.basics.triangle import Triangle
 from pyclut.basics.rectangle import RoundRectangle
-from pyclut.basics.circle import Circle, CircleChrono
 
 def on_input(stage, event):
 	if event.keyval == keysyms.q:
 		clutter.main_quit()
-
-def on_click(stage, event, chrono):
-	chrono.reset()
-	chrono.start()
 
 def main(image_directory):
 	stage = clutter.Stage()
@@ -28,14 +23,9 @@ def main(image_directory):
 	star = SixBranchStar()
 	triangle = Triangle()
 	roundrect = RoundRectangle()
-	circle = Circle()
-	chrono = CircleChrono()
-	stage.show()
 	stage.add(star)
 	stage.add(triangle)
 	stage.add(roundrect)
-	stage.add(circle)
-	stage.add(chrono)
 	star.set_position(400, 200)
 	star.set_size(100, 100)
 	triangle.set_position(500, 200)
@@ -47,17 +37,8 @@ def main(image_directory):
 	roundrect.set_texture("images/textures/cherry_wood.png")
 	roundrect.set_opacity(200)
 	roundrect.set_radius(25)
-	circle.set_position(300, 400)
-	circle.set_size(100, 100)
-	circle.set_texture("images/textures/cherry_wood.png")
-	circle.set_opacity(255)
-	circle.radius = 50
-	chrono.radius = 100
-	chrono.set_position(512, 500)
-	chrono.set_color("White")
-	chrono.start()
 	stage.connect('key-press-event', on_input)
-	stage.connect("button-release-event", on_click, chrono)
+	stage.show()
 	clutter.main()
 
 if __name__ == '__main__':

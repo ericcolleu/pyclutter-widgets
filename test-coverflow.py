@@ -19,10 +19,6 @@ def on_input(stage, event, coverflow, item_images):
 	elif event.keyval == keysyms.a:
 		coverflow.add(ReflectedItem(clutter.Texture(item_images[current])))
 		current = (current + 1) % len(item_images)
-	elif event.keyval == keysyms.s:
-		coverflow.show()
-	elif event.keyval == keysyms.h:
-		coverflow.hide()
 	elif event.keyval == keysyms.q:
 		clutter.main_quit()
 
@@ -42,14 +38,12 @@ def main(image_directory):
 
 	coverflow = Coverflow(size=(1024, 512), item_size=(128,128), angle=70, inter_item_space=50, selection_depth=200)
 	stage.add(coverflow)
-	coverflow.hide()
 	n_items = len(item_images)
 	items = []
 	stage.show()
 	for image in item_images:
 		coverflow.add(ReflectedItem(clutter.Texture(image)))
 	coverflow.set_position(0, 400)
-	coverflow.show()
 	stage.connect('key-press-event', on_input, coverflow, item_images)
 	clutter.main()
 
