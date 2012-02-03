@@ -1,7 +1,7 @@
 ﻿import clutter
 import gobject
 from pyclut.animation import Animator
-from pyclut.animation import ScaleAndFadeAnimation
+from pyclut.animation import ScaleAndFadeAnimation, OpacityAnimation
 from pyclut.basics.rectangle import RoundRectangle
 
 class ImageButton(clutter.Group):
