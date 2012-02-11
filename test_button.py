@@ -1,12 +1,11 @@
 ﻿#!/usr/bin/python
 
 from gi.repository import Clutter
-import glob, time
-import os.path
 from pyclut.controls.button import ImageButton, PulseButton
+import os
 
 def on_input(stage, event):
-	if event.keyval == Clutter.keysyms.q:
+	if event.keyval == Clutter.q or event.keyval == Clutter.Q:
 		Clutter.main_quit()
 
 def main(image_directory):
