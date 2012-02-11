@@ -10,23 +10,22 @@ class Shape (Clutter.Actor):
 	"""
 	__gtype_name__ = 'Shape'
 	__gproperties__ = {
-	  'color' : ( \
+	'color' : ( \
 		str, 'color', 'Color', None, GObject.PARAM_READWRITE \
-	  ),
-	  'texture' : ( \
+	),
+	'texture' : ( \
 		str, 'texture', 'Texture', None, GObject.PARAM_READWRITE \
-	  ),
+	),
 	}
 	__gsignals__ = {
 		'clicked' : ( \
-		  GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, () \
+		GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, () \
 		),
 	}
 
 	def __init__ (self, texture=None, color=None):
 		Clutter.Actor.__init__(self)
 		self._color = Clutter.Color.from_string(color or 'White')
-		print 50* "*", self._color
 		self._texture = texture
 		self._is_pressed = False
 		self.connect('button-press-event', self.do_button_press_event)
@@ -42,7 +41,6 @@ class Shape (Clutter.Actor):
 			self._color = color
 		else:
 			self._color = Clutter.Color.from_string(color)
-		print 50* "+", self._color
 
 	def set_texture(self, image):
 		"""Fill the shape with a texture given in parameter.
@@ -99,11 +97,11 @@ class Shape (Clutter.Actor):
 		pass
 
 	def __draw_shape(self, width, height, color=None, texture=None):
-		print 50*"-", color
+		tmp_alpha = self.get_paint_opacity() * color.alpha / 255
 		if texture:
 			Cogl.set_source_texture(texture)
 		else:
-			Cogl.set_source_color(color)
+			Cogl.set_source_color4ub(color.red, color.green, color.blue, tmp_alpha)
 		self.do_draw_shape(width, height)
 		Cogl.path_fill()
 

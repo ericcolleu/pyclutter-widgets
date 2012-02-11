@@ -72,22 +72,30 @@ class Carrousel(Clutter.Group):
 
 	def __update_item(self, item, angle, rank):
 		angle = clamp_angle(90+self._step*rank)
-		item.ellipse = Clutter.BehaviourEllipse(
-			self._alpha,
-			self._x,
-			self._y,
-			self._width,
-			self._height,
-			angle, angle)
+		item.ellipse = Clutter.BehaviourEllipse()
+		item.ellipse.set_alpha(self._alpha),
+		item.ellipse.set_center(self._x, self._y),
+		item.ellipse.set_width(self._width),
+		item.ellipse.set_height(self._height),
+		item.ellipse.set_angle_start(angle)
+		item.ellipse.set_angle_end(angle)
 		item.ellipse.set_tilt(*self._tilt)
 		item.ellipse.apply(item)
 		item.rank = rank
 		if rank == 0:
-			item.scale = Clutter.BehaviourScale(1.0, 1.0, self._selected_scale, self._selected_scale, self._alpha)
-			item.depth = Clutter.BehaviourDepth(item.get_depth(), self._selected_depth, self._alpha)
+			item.scale = Clutter.BehaviourScale()
+			item.scale.set_bounds(1.0, 1.0, self._selected_scale, self._selected_scale)
+			item.scale.set_alpha(self._alpha)
+			item.depth = Clutter.BehaviourDepth()
+			item.depth.set_bounds(item.get_depth(), self._selected_depth)
+			item.depth.set_alpha(self._alpha)
 		else:
-			item.scale = Clutter.BehaviourScale(1.0, 1.0, self._unselected_scale, self._unselected_scale, self._alpha)
-			item.depth = Clutter.BehaviourDepth(item.get_depth(), self._unselected_depth, alpha=self._alpha)
+			item.scale = Clutter.BehaviourScale()
+			item.scale.set_bounds(1.0, 1.0, self._unselected_scale, self._unselected_scale)
+			item.scale.set_alpha(self._alpha)
+			item.depth = Clutter.BehaviourDepth()
+			item.depth.set_bounds(item.get_depth(), self._unselected_depth)
+			item.depth.set_alpha(alpha=self._alpha)
 		item.scale.apply(item)
 		item.depth.apply(item)
 		item.angle = angle
@@ -220,6 +228,6 @@ class TextCarrousel(Carrousel):
 			txt = Clutter.Text(self._font)
 			txt.set_text(child)
 			txt.set_color(Clutter.Color.from_string(self._item_color))
-			txt.set_anchor_point_from_gravity(Clutter.GRAVITY_CENTER)
+			txt.set_anchor_point_from_gravity(Clutter.Gravity.CENTER)
 			self.do_add(txt)
 			Clutter.Group.add(self, txt)
