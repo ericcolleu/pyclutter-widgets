@@ -41,12 +41,12 @@ class ImageButton(Clutter.Group):
 		self._hide.start()
 
 	def _on_pressed(self, background, event):
-		if event.get_button() == 1:
+		if event.button == 1:
 			self._show_pressed()
 			self.emit("pressed", self._value)
 
 	def _on_released(self, background, event):
-		if event.get_button() == 1:
+		if event.button == 1:
 			self._show_released()
 			self.emit("released", self._value)
 
@@ -102,7 +102,7 @@ class PulseButton(Clutter.Group):
 		self.set_opacity(255)
 
 	def _on_pressed(self, background, event):
-		if event.get_button() == 1:
+		if event.button == 1:
 			self._press.apply(self)
 			self._press.start()
 			self.emit("pressed", self._value)
