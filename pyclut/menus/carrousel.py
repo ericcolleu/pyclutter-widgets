@@ -25,7 +25,7 @@ class Carrousel(Clutter.Group):
 		self._tilt = tilt
 		self._timeline = Clutter.Timeline(duration=100)
 		self._timeline.connect('completed', self.anim_completed)
-		self._alpha = Clutter.Alpha(self._timeline, Clutter.AnimationMode.LINEAR)
+		self._alpha = Clutter.Alpha.new_full(self._timeline, Clutter.AnimationMode.LINEAR)
 		self._selected_scale = 1.2
 		self._unselected_scale = 1.0
 		self._selected_depth = 100
@@ -225,9 +225,10 @@ class TextCarrousel(Carrousel):
 
 	def add_actor(self, *children):
 		for child in children:
-			txt = Clutter.Text(self._font)
-			txt.set_text(child)
-			txt.set_color(Clutter.Color.from_string(self._item_color))
+			txt = Clutter.Text.new_with_text(self._font, child)
+			color = Clutter.Color()
+			color.from_string(self._item_color)
+			txt.set_color(color)
 			txt.set_anchor_point_from_gravity(Clutter.Gravity.CENTER)
 			self.do_add_actor(txt)
 			Clutter.Group.add_actor(self, txt)

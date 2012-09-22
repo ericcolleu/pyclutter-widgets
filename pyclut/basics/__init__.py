@@ -25,7 +25,8 @@ class Shape (Clutter.Actor):
 
 	def __init__ (self, texture=None, color=None):
 		Clutter.Actor.__init__(self)
-		self._color = Clutter.Color.from_string(color or 'White')
+		self._color = Clutter.Color()
+		self._color.from_string(color or 'White')
 		self._texture = texture
 		self._is_pressed = False
 		self.connect('button-press-event', self.do_button_press_event)
@@ -40,7 +41,8 @@ class Shape (Clutter.Actor):
 		if isinstance(color, Clutter.Color):
 			self._color = color
 		else:
-			self._color = Clutter.Color.from_string(color)
+			self._color = Clutter.Color()
+			self._color.from_string(color)
 
 	def set_texture(self, image):
 		"""Fill the shape with a texture given in parameter.
@@ -56,7 +58,7 @@ class Shape (Clutter.Actor):
 		if pspec.name == 'color':
 			self._color = self.set_color(value)
 		elif pspec.name == 'texture':
-			self._color = Clutter.Texture(value)
+			self._color = Clutter.Texture.new_from_file(value)
 		else:
 			raise TypeError('Unknown property ' + pspec.name)
 
@@ -106,12 +108,12 @@ class Shape (Clutter.Actor):
 		Cogl.path_fill()
 
 	def do_paint (self):
-		(x1, y1, x2, y2) = self.get_allocation_box()
+		box = self.get_allocation_box()
 		if self._texture:
-			self.__draw_shape(x2 - x1, y2 - y1, texture = self._texture.get_cogl_texture())
+			self.__draw_shape(box.x2 - box.x1, box.y2 - box.y1, texture = self._texture.get_cogl_texture())
 		else:
 			self._color.alpha = self.get_paint_opacity()
-			self.__draw_shape(x2 - x1, y2 - y1, color = self._color)
+			self.__draw_shape(box.x2 - box.x1, box.y2 - box.y1, color = self._color)
 
 	def do_pick (self, pick_color):
 		if self.should_pick_paint() == False:

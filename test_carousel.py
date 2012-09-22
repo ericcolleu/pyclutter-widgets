@@ -1,13 +1,20 @@
 #!/usr/bin/python
 
+import pygtk
+pygtk.require('2.0')
 from gi.repository import Clutter
 
+import sys
 import glob
 import os.path
 from pyclut.menus.carrousel import Carrousel, TextCarrousel
 from pyclut.basics.rectangle import RoundRectangle
 global current
 current=1
+
+
+def do_quit(*args):
+	Clutter.main_quit()
 
 def on_input(stage, event, carrousel, textcarrousel, item_images):
 	global current
@@ -20,7 +27,7 @@ def on_input(stage, event, carrousel, textcarrousel, item_images):
 	elif event.keyval == Clutter.KEY_Down:
 		textcarrousel.next()
 	elif event.keyval == Clutter.a or event.keyval == Clutter.A:
-		carrousel.add_actor(Clutter.Texture(item_images[current]))
+		carrousel.add_actor(Clutter.Texture.new_from_file(item_images[current]))
 		current = (current + 1) % len(item_images)
 	elif event.keyval == Clutter.s or event.keyval == Clutter.S:
 		carrousel.show()
@@ -30,10 +37,11 @@ def on_input(stage, event, carrousel, textcarrousel, item_images):
 		Clutter.main_quit()
 
 def main(image_directory):
+	Clutter.init(sys.argv)
 	stage = Clutter.Stage()
 	stage.set_size(1024,768)
-	stage.connect('destroy', Clutter.main_quit)
-	stage.set_color(Clutter.Color(0, 0, 0, 255))
+	stage.connect('destroy', do_quit)
+	stage.set_color(Clutter.Color.new(0, 0, 0, 255))
 	stage.set_title('Carrousel')
 	item_images = glob.glob(os.path.join(image_directory, "*.png"))
 	text_selector = RoundRectangle()
@@ -66,11 +74,12 @@ def main(image_directory):
 	stage.add_actor(text_selector)
 	stage.show()
 	for rank, image in enumerate(item_images):
-		text = Clutter.Text("Courrier New 24 px")
-		text.set_text("%d" % rank)
-		text.set_color(Clutter.Color.from_string("White"))
+		text = Clutter.Text.new_with_text("Courrier New 24 px", "%d" % rank)
+		color = Clutter.Color()
+		color.from_string("White")
+		text.set_color(color)
 		item = Clutter.Group()
-		item.add_actor(Clutter.Texture(image))
+		item.add_actor(Clutter.Texture.new_from_file(image))
 #		item.add_actor(ReflectedItem(Clutter.Texture(image)))
 		item.add_actor(text)
 		carrousel.add_actor(item)
@@ -85,7 +94,6 @@ def main(image_directory):
 	Clutter.main()
 
 if __name__ == '__main__':
-	import sys
 	if len(sys.argv[1:]):
 		main(sys.argv[1])
 	else:
