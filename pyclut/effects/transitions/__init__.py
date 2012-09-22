@@ -1,6 +1,4 @@
-import clutter
-import gobject
-from clutter import cogl
+from gi.repository import Clutter, GObject, Cogl
 from pyclut.animation import Animator
 
 class Direction:
@@ -22,16 +20,16 @@ class TransitionZone(object):
 	def get_position(self):
 		return self._x, self._y
 
-class Transition(gobject.GObject):
+class Transition(GObject.Object):
 	__gtype_name__ = 'Transition'
 	__gsignals__ = {
 		'completed' : ( \
-		  gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, () \
+		GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, () \
 		),
 	}
 
-	def __init__(self, zone_object, actor_in, actor_out, final_position, duration=100, style=clutter.AnimationMode.LINEAR, backface_culling=False):
-		gobject.GObject.__init__(self)
+	def __init__(self, zone_object, actor_in, actor_out, final_position, duration=100, style=Clutter.AnimationMode.LINEAR, backface_culling=False):
+		super(Transition, self).__init__()
 		self._zone = zone_object
 		self._zone_size = self._zone.get_size()
 		self._zone_position = self._zone.get_position()
@@ -41,7 +39,7 @@ class Transition(gobject.GObject):
 		self._final_position = final_position
 		self._anim_factory = Animator()
 		self._backface_culling = backface_culling
-		self._saved_cull = cogl.get_backface_culling_enabled()
+		self._saved_cull = Cogl.get_backface_culling_enabled()
 
 	def preset_position(self):
 		pass
@@ -50,8 +48,8 @@ class Transition(gobject.GObject):
 		pass
 
 	def start(self):
-		self._saved_cull = cogl.get_backface_culling_enabled()
-		cogl.set_backface_culling_enabled(self._backface_culling)
+		self._saved_cull = Cogl.get_backface_culling_enabled()
+		Cogl.set_backface_culling_enabled(self._backface_culling)
 		self.preset_position()
 		self._actor_in.show()
 		anim_in, anim_out = self.create_animations()
@@ -62,7 +60,7 @@ class Transition(gobject.GObject):
 		anim_out.start()
 
 	def _on_anim_completed(self, event):
-		cogl.set_backface_culling_enabled(self._saved_cull)
+		Cogl.set_backface_culling_enabled(self._saved_cull)
 		self._actor_out.hide()
 		self.emit("completed")
 

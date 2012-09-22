@@ -22,8 +22,8 @@ class ImageButton(Clutter.Group):
 		self._released_background.set_opacity(255)
 		self._show = OpacityAnimation(255, 10, Clutter.AnimationMode.LINEAR)
 		self._hide = OpacityAnimation(0, 10, Clutter.AnimationMode.LINEAR)
-		self.add(self._pressed_background)
-		self.add(self._released_background)
+		self.add_actor(self._pressed_background)
+		self.add_actor(self._released_background)
 		self._released_background.connect("button-press-event", self._on_pressed)
 		self._released_background.connect("button-release-event", self._on_released)
 		self._released_background.set_reactive(True)
@@ -58,7 +58,7 @@ class TextButton(ImageButton):
 	def __init__(self, text, released_background, pressed_background, value=None):
 		ImageButton.__init__(self, released_background, pressed_background, value)
 		self.text = Clutter.Text(text)
-		self.add(self.text)
+		self.add_actor(self.text)
 
 class PulseButton(Clutter.Group):
 	"""PulseButton : button scaling to 1.5 its size during
@@ -86,11 +86,11 @@ class PulseButton(Clutter.Group):
 		self._background.set_anchor_point_from_gravity(Clutter.Gravity.CENTER)
 		self._press = ScaleAndFadeAnimation(1.5, 0, 50, Clutter.AnimationMode.LINEAR)
 		self._press.connect("completed", self._restore)
-		self.add(self._background)
+		self.add_actor(self._background)
 		if text:
 			self.text = Clutter.Text("courrier new 24px", text)
 			self.text.set_anchor_point_from_gravity(Clutter.Gravity.CENTER)
-			self.add(self.text)
+			self.add_actor(self.text)
 		self._background.connect("button-press-event", self._on_pressed)
 		self._background.set_reactive(True)
 

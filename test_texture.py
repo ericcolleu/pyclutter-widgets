@@ -10,7 +10,7 @@ stage.set_title('texture')
 
 stage.show()
 texture = Clutter.Texture(sys.argv[0])
-stage.add(texture)
+stage.add_actor(texture)
 
 #print texture.get_cogl_texture()
 

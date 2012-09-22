@@ -23,13 +23,13 @@ def main(image_directory):
 	stage.set_title('Thumbnail Page')
 	item_images = glob.glob(os.path.join(image_directory, "*.png"))
 	thumbnailpage = ThumbnailPage(size=(1024,768), max_row=4, max_column=5, inter_item_space=60)
-	stage.add(thumbnailpage)
+	stage.add_actor(thumbnailpage)
 	n_items = len(item_images)
 	items = []
 	stage.show()
 	images=3*item_images
 	for image in images[:20]:
-		thumbnailpage.add(clutter.Texture(image))
+		thumbnailpage.add_actor(clutter.Texture(image))
 	
 	thumbnailpage.select(0)
 	stage.connect('key-press-event', on_input, thumbnailpage)

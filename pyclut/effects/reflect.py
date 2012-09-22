@@ -68,12 +68,12 @@ class ReflectedItem(Clutter.Group):
 	def __init__(self, object):
 		Clutter.Actor.__init__(self)
 		self._object = object
-		self.add(self._object)
+		self.add_actor(self._object)
 		self._create_reflection()
 
 	def _create_reflection(self):
 		self._reflect = TextureReflection(self._object)
-		self.add(self._reflect)
+		self.add_actor(self._reflect)
 		self._reflect.set_position(0, self._object.get_height()+10)
 
 

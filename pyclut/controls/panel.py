@@ -12,9 +12,9 @@ class Panel(Clutter.Group):
 		else:
 			self._background = background
 		self._background.set_size(*size)
-		self.add(self._background)
+		self.add_actor(self._background)
 		if children:
-			self.add(*children)
+			self.add_actor(*children)
 
 	def show(self):
 		print "show panel"

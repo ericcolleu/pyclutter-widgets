@@ -55,7 +55,7 @@ class TransitionTest(PyClutTest):
 				self._stage.get_size()[1]/2-obj.get_size()[1]/2
 			)
 			obj.hide()
-			self._stage.add(obj)
+			self._stage.add_actor(obj)
 		self.objects[0].show()
 		clutter.main()
 

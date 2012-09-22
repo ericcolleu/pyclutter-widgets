@@ -32,7 +32,7 @@ class Carrousel(Clutter.Group):
 		self._unselected_depth = 0
 		self._fade_ratio = fade_ratio
 		if children:
-			self.add(*children)
+			self.add_actor(*children)
 
 	def __update_step(self):
 		if self._children:
@@ -102,15 +102,15 @@ class Carrousel(Clutter.Group):
 		self.__update_opacity(item)
 		self._timeline.start()
 
-	def add(self, *children):
+	def add_actor(self, *children):
 		"""Add a list of items to the carrousel menu.
-		carrousel.add(item1, item2, item3) -> return None
+		carrousel.add_actor(item1, item2, item3) -> return None
 		"""
 		[child.set_size(*self._item_size) for child in children]
-		self.do_add(*children)
-		Clutter.Group.add(self, *children)
+		self.do_add_actor(*children)
+		Clutter.Group.add_actor(self, *children)
 
-	def do_add(self, *children):
+	def do_add_actor(self, *children):
 		for child in children:
 			self._children.append(child)
 		self.__update_step()
@@ -223,11 +223,11 @@ class TextCarrousel(Carrousel):
 		self._selected_item_color = selected_item_color
 		Carrousel.__init__(self, x=x, y=y, size=size, item_size=item_size, fade_ratio=fade_ratio, tilt=tilt, children=children)
 
-	def add(self, *children):
+	def add_actor(self, *children):
 		for child in children:
 			txt = Clutter.Text(self._font)
 			txt.set_text(child)
 			txt.set_color(Clutter.Color.from_string(self._item_color))
 			txt.set_anchor_point_from_gravity(Clutter.Gravity.CENTER)
-			self.do_add(txt)
-			Clutter.Group.add(self, txt)
+			self.do_add_actor(txt)
+			Clutter.Group.add_actor(self, txt)

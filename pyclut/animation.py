@@ -46,7 +46,7 @@ class MoveAnimation(AbstractAnimation):
 
 	def do_prepare_animation(self):
 		start_x, start_y = self._actor.get_position()
-		path = Clutter.Path("M %s %s L %s %s" % (start_x, start_y, self._destination[0], self._destination[1]))
+		path = Clutter.Path.new_with_description("M %s %s L %s %s" % (start_x, start_y, self._destination[0], self._destination[1]))
 		behaviours = [Clutter.BehaviourPath(alpha=self._alpha, path=path),]
 		return behaviours
 
@@ -64,9 +64,9 @@ class CenteredRotateAnimation(AbstractAnimation):
 			angle_end=clamp_angle(self._angle),
 			alpha=self._alpha,
 			direction=self._direction)
-		if self._axis == Clutter.RotateAxis.AlignAxis.Y_AXIS:
+		if self._axis == Clutter.RotateAxis.Y_AXIS:
 			behaviour.set_center(int(self._actor.get_width()/2), 0, 0)
-		elif self._axis == Clutter.AlignAxis.X_AXIS:
+		elif self._axis == Clutter.RotateAxis.X_AXIS:
 			behaviour.set_center(0, int(self._actor.get_height()/2), 0)
 		return [behaviour,]
 

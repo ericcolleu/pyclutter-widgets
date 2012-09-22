@@ -22,12 +22,12 @@ class ThumbnailPage(Clutter.Group):
 		self._inter_item_space = inter_item_space
 		self._children=[]
 
-	def add(self, *children):
+	def add_actor(self, *children):
 		if self.is_full():
 			raise PageFullError()
 		[child.set_size(*self._item_size) for child in children]
 		self._children+=children
-		Clutter.Group.add(self, *children)
+		Clutter.Group.add_actor(self, *children)
 		self.__update()
 
 	def __update(self):
@@ -87,33 +87,35 @@ class ThumbnailPage(Clutter.Group):
 
 class ThumbnailMenu(Clutter.Group):
 	__gtype_name__ = 'ThumbnailMenu'
-	def __init__(self, x=0, y=0, size=(512, 128), item_size=(128, 128), row=2, column=2, selection_depth=200, inter_item_space=10, *children):
+	def __init__(self, x=0, y=0, item_size=(128, 128), row=2, column=2, selection_depth=200, inter_item_space=10, *children):
 		Clutter.Group.__init__(self)
 		self._x = x
 		self._y = y
 		self._selected = 0
-		self._args = size, row, column, selection_depth, item_size, inter_item_space
+		width = (item_size[0] + inter_item_space) * column
+		height = (item_size[1] + inter_item_space) * row
+		self._args = (width, height), row, column, selection_depth, item_size, inter_item_space
 		self._item_by_page = row * column
 		self._current_page = ThumbnailPage(*self._args)
 		self._current_page.show()
 		self._current_page_index = 0
 		self._pages = [self._current_page, ]
-		Clutter.Group.add(self, self._current_page)
+		Clutter.Group.add_actor(self, self._current_page)
 		self._nb_children=0
 		if children:
-			self.add(*children)
+			self.add_actor(*children)
 
-	def add(self, *children):
+	def add_actor(self, *children):
 		last_page = self._pages[-1]
 		for child in children:
 			try:
-				last_page.add(child)
+				last_page.add_actor(child)
 			except PageFullError:
 				last_page = ThumbnailPage(*self._args)
 				last_page.hide()
 				self._pages.append(last_page)
-				Clutter.Group.add(self, last_page)
-				last_page.add(child)
+				Clutter.Group.add_actor(self, last_page)
+				last_page.add_actor(child)
 
 	def next(self):
 		self._current_page.next()

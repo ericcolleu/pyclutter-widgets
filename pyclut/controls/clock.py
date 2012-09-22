@@ -13,7 +13,7 @@ class Flap(Clutter.Group):
 			self.background = RoundRectangle()
 			self.background.set_size(*size)
 			self.background.set_color(Clutter.Color.from_string(background_color))
-			self.add(self.background)
+			self.add_actor(self.background)
 		self.text = Clutter.Text(font)
 		self.text.set_text("%02d" % value)
 		self.text.set_color(Clutter.Color.from_string(text_color))
@@ -21,7 +21,7 @@ class Flap(Clutter.Group):
 			(size[0]/2)-(self.text.get_width()/2),
 			(size[1]/2)-(self.text.get_height()/2)
 		)
-		self.add(self.text)
+		self.add_actor(self.text)
 
 class HalfFlap(Flap):
 	__gtype_name__ = 'HalfFlap'
@@ -57,7 +57,7 @@ class FlapClock(Clutter.Group):
 		for rank, num in enumerate(self._number_values):
 			flap = self.__create_flap(rank, num)
 			self._flaps.append(flap)
-			self.add(flap)
+			self.add_actor(flap)
 
 	def __update_numbers(self):
 		now = datetime.now()
@@ -68,7 +68,7 @@ class FlapClock(Clutter.Group):
 
 	def __update_number(self, rank, new_value):
 		new_flap = self.__create_flap(rank, new_value)
-		self.add(new_flap)
+		self.add_actor(new_flap)
 		old_flap = self._flaps[rank]
 		self._flaps[rank] = new_flap
 		transition = FlapTransition(
@@ -100,7 +100,7 @@ class DoubleFlap(Clutter.Group):
 		self.top = HalfFlap(value, size, background_color, text_color)
 		self.bottom = HalfFlap(value, size, False, background_color, text_color)
 		self.bottom.set_rotation(Clutter.AlignAxis.Y_AXIS, 180, self._back.get_width()/2, 0, 0)
-		self.add(self.top, self.bottom)
+		self.add_actor(self.top, self.bottom)
 
 
 class FlipClock(Clutter.Group):
@@ -124,7 +124,7 @@ class FlipClock(Clutter.Group):
 
 	def __update_number(self, rank, new_value):
 		new_flap = self.__create_flap(rank, new_value)
-		self.add(new_flap)
+		self.add_actor(new_flap)
 		old_flap = self._flaps[rank]
 		self._flaps[rank] = new_flap
 		transition = FlapTransition(

@@ -70,7 +70,7 @@ class KeyRowLayout(Clutter.Group):
 			button=button_factory.get_button(text=str(key), value=key)
 			button.set_size(*button_size)
 			button.connect("pressed", self._on_pressed)
-			self.add(button)
+			self.add_actor(button)
 			button.set_position(x, y)
 			x += button_size[0] + inter_button_space
 
@@ -91,7 +91,7 @@ class SimpleKeyboard(Clutter.Group):
 		self._inter_button_space = inter_button_space
 		self._background = background or RoundRectangle()
 		self._button_factory = button_factory or PulseButtonFactory()
-		self.add(self._background)
+		self.add_actor(self._background)
 		self.__create_buttons()
 
 	def __get_keyboard_size(self):
@@ -108,7 +108,7 @@ class SimpleKeyboard(Clutter.Group):
 		for line in self._layout.get_key_map():
 			row = KeyRowLayout(line, self._button_factory, self._button_size, self._inter_button_space)
 			row.connect("key-pressed", self._on_button)
-			self.add(row)
+			self.add_actor(row)
 			row.set_position(self._inter_button_space+(width-row.get_width())/2, y)
 			y += self._button_size[1]+self._inter_button_space
 

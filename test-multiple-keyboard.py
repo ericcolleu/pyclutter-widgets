@@ -84,9 +84,9 @@ class MultipleKeyboardTest(PyClutTest):
 			["123", "ABC"],
 		]
 		self.keyboards["abc"] = self.createKeyboard("abc", key_map)
-		self._stage.add(self.keyboards["ABC"])
-		self._stage.add(self.keyboards["123"])
-		self._stage.add(self.keyboards["abc"])
+		self._stage.add_actor(self.keyboards["ABC"])
+		self._stage.add_actor(self.keyboards["123"])
+		self._stage.add_actor(self.keyboards["abc"])
 		self.keyboards["ABC"].set_position(
 			self._stage.get_width()/2-self.keyboards["ABC"].get_width()/2,
 			self._stage.get_height()/2-self.keyboards["ABC"].get_height()/2)

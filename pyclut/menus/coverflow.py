@@ -45,33 +45,30 @@ class Coverflow(Clutter.Group):
 		self._children = []
 		self.set_reactive(True)
 		if children:
-			self.add(*children)
+			self.add_actor(*children)
 
 	def show(self):
 		self.set_scale(0, 0)
 		Clutter.Group.show(self)
-		anim = ScaleAnimation(scale_x=1.0, scale_y=1.0, duration=1000, style=Clutter.EASE_OUT_BACK)
+		anim = ScaleAnimation(scale_x=1.0, scale_y=1.0, duration=1000, style=Clutter.AnimationMode.EASE_OUT_BACK)
 		anim.apply(self)
 		anim.start()
 
 	def hide(self):
-		anim = ScaleAnimation(scale_x=0.0, scale_y=0.0, duration=1000, style=Clutter.EASE_IN_BACK)
+		anim = ScaleAnimation(scale_x=0.0, scale_y=0.0, duration=1000, style=Clutter.AnimationMode.EASE_IN_BACK)
 		anim.apply(self)
-		anim.connect("completed",  self.do_hide)
 		anim.start()
 
-	def do_hide(self, *args):
-		Clutter.Group.hide(self)
-
-	def add(self, *children):
+	def add_actor(self, *children):
 		"""Add a list of items to the coverflow menu.
-		coverflow.add(item1, item2, item3) -> return None
+		coverflow.add_actor(item1, item2, item3) -> return None
 		"""
+		print children
 		[child.set_size(*self._item_size) for child in children]
-		self.do_add(*children)
-		Clutter.Group.add(self, *children)
+		self.do_add_actor(*children)
+		[super(Coverflow, self).add_actor(child) for child in children]
 
-	def do_add(self, *children):
+	def do_add_actor(self, *children):
 		for child in children:
 			self._children.append(child)
 		self.__update_items_position()
@@ -90,12 +87,12 @@ class Coverflow(Clutter.Group):
 		anim = CoverflowItemAnimation(
 			destination=(destination, self._y),
 			angle=angle,
-			axis=Clutter.AlignAxis.Y_AXIS,
+			axis=Clutter.RotateAxis.Y_AXIS,
 			direction=direction,
 			scale=1.0,
 			depth=depth,
-			duration=100,
-			style=Clutter.EASE_IN_OUT_SINE
+			duration=200,
+			style=Clutter.AnimationMode.EASE_IN_OUT_SINE
 		)
 		anim.apply(item)
 		return anim

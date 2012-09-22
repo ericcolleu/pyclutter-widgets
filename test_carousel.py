@@ -20,7 +20,7 @@ def on_input(stage, event, carrousel, textcarrousel, item_images):
 	elif event.keyval == Clutter.KEY_Down:
 		textcarrousel.next()
 	elif event.keyval == Clutter.a or event.keyval == Clutter.A:
-		carrousel.add(Clutter.Texture(item_images[current]))
+		carrousel.add_actor(Clutter.Texture(item_images[current]))
 		current = (current + 1) % len(item_images)
 	elif event.keyval == Clutter.s or event.keyval == Clutter.S:
 		carrousel.show()
@@ -61,19 +61,19 @@ def main(image_directory):
 		tilt=(0.0, 270.0, 90.0),
 		children=texts
 	)
-	stage.add(carrousel)
-	stage.add(textcarrousel)
-	stage.add(text_selector)
+	stage.add_actor(carrousel)
+	stage.add_actor(textcarrousel)
+	stage.add_actor(text_selector)
 	stage.show()
 	for rank, image in enumerate(item_images):
 		text = Clutter.Text("Courrier New 24 px")
 		text.set_text("%d" % rank)
 		text.set_color(Clutter.Color.from_string("White"))
 		item = Clutter.Group()
-		item.add(Clutter.Texture(image))
-#		item.add(ReflectedItem(Clutter.Texture(image)))
-		item.add(text)
-		carrousel.add(item)
+		item.add_actor(Clutter.Texture(image))
+#		item.add_actor(ReflectedItem(Clutter.Texture(image)))
+		item.add_actor(text)
+		carrousel.add_actor(item)
 
 	carrousel.set_position(
 		stage.get_size()[0]/2-carrousel.get_size()[0]/2,

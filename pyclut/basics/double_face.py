@@ -7,9 +7,9 @@ class DoubleFaceTexture(Clutter.Group):
 		Clutter.Group.__init__(self)
 		self._front = Clutter.Texture(front)
 		self._back = Clutter.Texture(back)
-		self._back.set_rotation(Clutter.AlignAxis.Y_AXIS, 180, self._back.get_width()/2, 0, 0)
-		self.add(self._back)
-		self.add(self._front)
+		self._back.set_rotation(Clutter.RotateAxis.Y_AXIS, 180, self._back.get_width()/2, 0, 0)
+		self.add_actor(self._back)
+		self.add_actor(self._front)
 
 	def do_paint(self):
 		cull = Cogl.get_backface_culling_enabled()

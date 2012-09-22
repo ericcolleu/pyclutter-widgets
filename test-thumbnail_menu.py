@@ -20,7 +20,7 @@ class ThumbnailMenuTest(PyClutTest):
 		elif event.keyval == keysyms.Page_Up:
 			self.thumbnailmenu.next_page()
 		elif event.keyval == keysyms.a:
-			self.thumbnailmenu.add(clutter.Texture(self.get_image()))
+			self.thumbnailmenu.add_actor(clutter.Texture(self.get_image()))
 
 	def run(self):
 		nb_row = 4
@@ -35,12 +35,12 @@ class ThumbnailMenuTest(PyClutTest):
 			inter_item_space=inter_item,
 			selection_depth=50
 		)
-		self._stage.add(self.thumbnailmenu)
+		self._stage.add_actor(self.thumbnailmenu)
 		self._stage.show()
 		for rank in range(20):
 			image = self.get_image()
 			item = PulseButton(clutter.Texture(image))
-			self.thumbnailmenu.add(item)
+			self.thumbnailmenu.add_actor(item)
 		self.thumbnailmenu.set_position(
 			self._stage_center[0]-self.thumbnailmenu.get_size()[0]/2,
 			self._stage_center[1]-self.thumbnailmenu.get_size()[1]/2

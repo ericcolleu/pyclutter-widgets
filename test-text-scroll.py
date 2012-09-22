@@ -24,9 +24,9 @@ class ScrollTextTest(PyClutTest):
 		h_scrollbar = Scrollbar(horizontal=True)
 		h_scrollbar.set_size(600,40)
 		h_scrollbar.set_position(100,450)
-		self._stage.add(v_scrollbar)
-		self._stage.add(h_scrollbar)
-		self._stage.add(area)
+		self._stage.add_actor(v_scrollbar)
+		self._stage.add_actor(h_scrollbar)
+		self._stage.add_actor(area)
 		v_scrollbar.connect('scroll_position',area.callback_position)
 		h_scrollbar.connect('scroll_position',area.callback_position)
 

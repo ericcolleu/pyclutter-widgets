@@ -11,7 +11,7 @@ class FlapClockTest(PyClutTest):
 
 	def run(self):
 		self.clock = FlapClock()
-		self._stage.add(self.clock)
+		self._stage.add_actor(self.clock)
 		self._stage.show()
 		self.clock.set_position(
 			self._stage_center[0]-self.clock.get_size()[0]/2,
@@ -26,7 +26,7 @@ class FlapClockTest(PyClutTest):
 			self._stage_center[0]-self.clock.get_size()[0]/2,
 			self._stage_center[1]-self.clock.get_size()[1]/2 + 100
 		)
-		self._stage.add(flap)
+		self._stage.add_actor(flap)
 		self.behaviour.set_center(int(flap.get_width()/2), 0, 0)
 		self.behaviour.apply(flap)
 		self.timeline.start()

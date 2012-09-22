@@ -21,7 +21,7 @@ class MoveAnimationTest(PyClutTest):
 	def run(self):
 		self._stage.connect('key-press-event', self.on_input)
 		self.item = clutter.Texture(self.get_image())
-		self._stage.add(self.item)
+		self._stage.add_actor(self.item)
 		self._stage.show()
 		self._stage.connect('button-press-event', self.on_button_press)
 		clutter.main()

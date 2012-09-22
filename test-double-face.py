@@ -21,7 +21,7 @@ class OdoTest(PyClutTest):
 			back=self.get_image(),
 		)
 		self._stage.show()
-		self._stage.add(item)
+		self._stage.add_actor(item)
 		item.set_position(
 			self._stage.get_size()[0]/2-item.get_size()[0]/2,
 			self._stage.get_size()[1]/2-item.get_size()[1]/2

@@ -5,6 +5,7 @@ from pyclut.animation import Animator, TurnAroundAnimation
 import glob
 import os.path
 import pygtk
+import sys
 pygtk.require('2.0')
 
 
@@ -15,7 +16,7 @@ anims_label = ["Move", "Rotate", "Scale", "Opacify", "Depth"]
 global label
 
 def on_input(stage, event):
-	if event.keyval == Clutter.keysyms.q:
+	if event.keyval == Clutter.q:
 		Clutter.main_quit()
 
 def on_button_press(stage, event, factory, actor, _):
@@ -23,7 +24,7 @@ def on_button_press(stage, event, factory, actor, _):
 	global current_anim
 	global anims_label
 	anims = []
-	if event.get_button() == 3:
+	if event.button == 3:
 		current_anim = (current_anim + 1) % len(anims_label)
 		label.set_text(anims_label[current_anim])
 	else:
@@ -58,6 +59,7 @@ def main(image_directory):
 	global label
 	global current_anim
 	global anims_label
+	Clutter.init(sys.argv)
 	stage = Clutter.Stage()
 	stage.set_size(1024, 768)
 	stage.connect('destroy', do_quit)

@@ -49,7 +49,7 @@ class UserInterface(object):
 			self.current_screen.hide()
 			self._stage.remove(self.current_screen)
 		self.current_screen = self._config.get_screen(name)
-		self._stage.add(self.current_screen)
+		self._stage.add_actor(self.current_screen)
 		self.current_screen.show()
 		
 		

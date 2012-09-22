@@ -28,7 +28,7 @@ class SimpleKeyboardTest(PyClutTest):
 			button_size=(48,48),
 			inter_button_space=10
 		)
-		self._stage.add(keyboard)
+		self._stage.add_actor(keyboard)
 		keyboard.set_position(
 			self._stage.get_width()/2-keyboard.get_width()/2,
 			self._stage.get_height()/2-keyboard.get_height()/2)
