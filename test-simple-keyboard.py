@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import clutter
+from gi.repository import Clutter
 
 from test import PyClutTest
 from pyclut.controls.keyboard import SimpleKeyboard, KeyboardLayout, PulseButtonFactory
@@ -32,7 +32,7 @@ class SimpleKeyboardTest(PyClutTest):
 		keyboard.set_position(
 			self._stage.get_width()/2-keyboard.get_width()/2,
 			self._stage.get_height()/2-keyboard.get_height()/2)
-		clutter.main()
+		Clutter.main()
 
 if __name__ == '__main__':
 	test = SimpleKeyboardTest(resolution=(800, 600), background_color="White")

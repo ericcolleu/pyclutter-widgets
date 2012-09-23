@@ -52,7 +52,7 @@ class Shape (Clutter.Actor):
 		if isinstance(image, Clutter.Texture):
 			self._texture = image
 		else:
-			self._texture = Clutter.Texture(image)
+			self._texture = Clutter.Texture.new_from_file(image)
 
 	def do_set_property (self, pspec, value):
 		if pspec.name == 'color':

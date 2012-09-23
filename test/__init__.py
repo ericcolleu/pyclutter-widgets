@@ -1,14 +1,17 @@
-import clutter
+import sys
+from gi.repository import Clutter
 import glob
 import os.path
-from clutter import keysyms
 
 class PyClutTest(object):
 	def __init__(self, resolution=(1024, 768), background_color=None, image_directory="./images"):
-		self._stage = clutter.Stage()
+		Clutter.init(sys.argv)
+		self._stage = Clutter.Stage()
 		self._stage.set_size(*resolution)
-		self._stage.connect('destroy', clutter.main_quit)
-		self._stage.set_color(clutter.Color.from_string(background_color or "Black"))
+		self._stage.connect('destroy', self.quit)
+		color = Clutter.Color()
+		color.from_string(background_color or "Black")
+		self._stage.set_color(color)
 		self._stage.set_title(self.__class__.__name__)
 		self._stage.show()
 		self.item_images = glob.glob(os.path.join(image_directory, "*.png"))
@@ -19,9 +22,12 @@ class PyClutTest(object):
 	def impl_on_input(self, *args):
 		pass
 
+	def quit(self, *args):
+		Clutter.main_quit()
+
 	def on_input(self, stage, event):
-		if event.keyval == keysyms.q:
-			clutter.main_quit()
+		if event.keyval == Clutter.q:
+			Clutter.main_quit()
 		else:
 			self.impl_on_input(stage, event)
 

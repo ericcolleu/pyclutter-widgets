@@ -1,41 +1,44 @@
 #!/usr/bin/python
 
-import clutter
+from gi.repository import Clutter
 
-import glob, time
+import glob, time, sys
 import os.path
-from clutter import keysyms
 from pyclut.basics.star import SixBranchStar
 from pyclut.basics.triangle import Triangle
 from pyclut.basics.rectangle import RoundRectangle
 from pyclut.basics.circle import Circle, CircleChrono
 
 def on_input(stage, event):
-	if event.keyval == keysyms.q:
-		clutter.main_quit()
+	if event.keyval == Clutter.q:
+		Clutter.main_quit()
 
 def on_click(stage, event, chrono):
 	chrono.reset()
 	chrono.start()
 
+def do_quit(*args):
+	Clutter.main_quit()
+
 def main(image_directory):
-	stage = clutter.Stage()
+	Clutter.init(sys.argv)
+	stage = Clutter.Stage()
 	stage.set_size(1024,768)
-	stage.connect('destroy', clutter.main_quit)
-	stage.set_color(clutter.Color(0, 0, 0, 255))
-	stage.set_title('Carrousel')
+	stage.connect('destroy', do_quit)
+	stage.set_color(Clutter.Color.new(0, 0, 0, 255))
+	stage.set_title('Various shapes')
 	item_images = glob.glob(os.path.join(image_directory, "*.png"))
 	star = SixBranchStar()
 	triangle = Triangle()
 	roundrect = RoundRectangle()
 	circle = Circle()
-	chrono = CircleChrono()
+	#chrono = CircleChrono()
 	stage.show()
 	stage.add_actor(star)
 	stage.add_actor(triangle)
 	stage.add_actor(roundrect)
 	stage.add_actor(circle)
-	stage.add_actor(chrono)
+#	stage.add_actor(chrono)
 	star.set_position(400, 200)
 	star.set_size(100, 100)
 	triangle.set_position(500, 200)
@@ -52,13 +55,13 @@ def main(image_directory):
 	circle.set_texture("images/textures/cherry_wood.png")
 	circle.set_opacity(255)
 	circle.radius = 50
-	chrono.radius = 100
-	chrono.set_position(512, 500)
-	chrono.set_color("White")
-	chrono.start()
+#	chrono.radius = 100
+#	chrono.set_position(512, 500)
+#	chrono.set_color("White")
+#	chrono.start()
 	stage.connect('key-press-event', on_input)
-	stage.connect("button-release-event", on_click, chrono)
-	clutter.main()
+#	stage.connect("button-release-event", on_click, chrono)
+	Clutter.main()
 
 if __name__ == '__main__':
 	import sys

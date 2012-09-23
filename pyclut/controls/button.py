@@ -88,7 +88,7 @@ class PulseButton(Clutter.Group):
 		self._press.connect("completed", self._restore)
 		self.add_actor(self._background)
 		if text:
-			self.text = Clutter.Text("courrier new 24px", text)
+			self.text = Clutter.Text.new_with_text("courrier new 24px", text)
 			self.text.set_anchor_point_from_gravity(Clutter.Gravity.CENTER)
 			self.add_actor(self.text)
 		self._background.connect("button-press-event", self._on_pressed)

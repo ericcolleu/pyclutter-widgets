@@ -13,7 +13,7 @@ class RotateAndFadeAnimation(RotateAnimation, OpacityAnimation):
 		return behaviours
 
 class RotateTransition(Transition):
-	def __init__(self, actor_in, actor_out, direction=Clutter.RotateDirection.CW, axis=Clutter.AlignAxis.Y_AXIS, final_position=None, center=None, duration=500, style=Clutter.AnimationMode.LINEAR):
+	def __init__(self, actor_in, actor_out, direction=Clutter.RotateDirection.CW, axis=Clutter.RotateAxis.Y_AXIS, final_position=None, center=None, duration=500, style=Clutter.AnimationMode.LINEAR):
 		Transition.__init__(self, actor_out, actor_in, actor_out, final_position=final_position or actor_in.get_position(), duration=duration, style=style, backface_culling=True)
 		self._axis = axis
 		self._direction = direction
@@ -44,6 +44,6 @@ class RotateTransition(Transition):
 
 class FlapTransition(RotateTransition):
 	def __init__(self, actor_in, actor_out, duration=500):
-		RotateTransition.__init__(self, actor_in, actor_out, direction=Clutter.RotateDirection.CW, axis=Clutter.AlignAxis.X_AXIS, final_position=actor_in.get_position(), center=(0, 0, 0), duration=duration, style=Clutter.EASE_OUT_BOUNCE)
+		RotateTransition.__init__(self, actor_in, actor_out, direction=Clutter.RotateDirection.CW, axis=Clutter.RotateAxis.X_AXIS, final_position=actor_in.get_position(), center=(0, 0, 0), duration=duration, style=Clutter.AnimationMode.EASE_OUT_BOUNCE)
 
 

@@ -12,11 +12,14 @@ class Flap(Clutter.Group):
 		if background_color:
 			self.background = RoundRectangle()
 			self.background.set_size(*size)
-			self.background.set_color(Clutter.Color.from_string(background_color))
+			color = Clutter.Color()
+			color.from_string(background_color)
+			self.background.set_color(color)
 			self.add_actor(self.background)
-		self.text = Clutter.Text(font)
-		self.text.set_text("%02d" % value)
-		self.text.set_color(Clutter.Color.from_string(text_color))
+		self.text = Clutter.Text.new_with_text(font, "%02d" % value)
+		txt_color = Clutter.Color()
+		txt_color.from_string(text_color)
+		self.text.set_color(txt_color)
 		self.text.set_position(
 			(size[0]/2)-(self.text.get_width()/2),
 			(size[1]/2)-(self.text.get_height()/2)
@@ -80,7 +83,7 @@ class FlapClock(Clutter.Group):
 		return transition, rank, old_flap
 
 	def _on_transition_done(self, event, rank, old_flap):
-		self.remove(old_flap)
+		self.remove_actor(old_flap)
 
 	def do_refresh_clock(self, as_changed):
 		transitions = []
@@ -99,7 +102,7 @@ class DoubleFlap(Clutter.Group):
 		Clutter.Group.__init__(self)
 		self.top = HalfFlap(value, size, background_color, text_color)
 		self.bottom = HalfFlap(value, size, False, background_color, text_color)
-		self.bottom.set_rotation(Clutter.AlignAxis.Y_AXIS, 180, self._back.get_width()/2, 0, 0)
+		self.bottom.set_rotation(Clutter.RotateAxis.Y_AXIS, 180, self._back.get_width()/2, 0, 0)
 		self.add_actor(self.top, self.bottom)
 
 

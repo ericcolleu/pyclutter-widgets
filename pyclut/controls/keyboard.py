@@ -52,7 +52,7 @@ class PulseButtonFactory(object):
 
 	def get_button(self, text=None, value=None):
 		if self._background:
-			background=Clutter.Texture(self._background)
+			background=Clutter.Texture.new_from_file(self._background)
 		else:
 			background=Clutter.RoundRectangle()
 			background.set_color(self._color or "White")
