@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from gi.repository import Clutter
-from test import PyClutTest
+from pyclut.test_tools import PyClutTest
 from pyclut.animation import CenteredRotateAnimation
 
 class MoveAnimationTest(PyClutTest):

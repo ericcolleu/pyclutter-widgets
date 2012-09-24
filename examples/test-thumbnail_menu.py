@@ -1,7 +1,7 @@
 ﻿#!/usr/bin/python
 
 from gi.repository import Clutter
-from test import PyClutTest
+from pyclut.test_tools import PyClutTest
 from pyclut.menus.thumbnail_menu import ThumbnailMenu
 from pyclut.controls.button import PulseButton
 

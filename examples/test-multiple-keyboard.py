@@ -2,7 +2,7 @@
 
 from gi.repository import Clutter, Cogl
 
-from test import PyClutTest
+from pyclut.test_tools import PyClutTest
 from pyclut.controls.keyboard import SimpleKeyboard, KeyboardLayout, PulseButtonFactory
 from pyclut.basics.rectangle import RoundRectangle
 from pyclut.effects.transitions import TransitionZone

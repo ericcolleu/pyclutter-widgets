@@ -47,30 +47,30 @@ class FlapClock(Clutter.Group):
 		self._number_values = 3*[0,]
 		self._inter_space = 10
 		self._flaps = []
-		self.__update_numbers()
-		self.__create_flaps()
+		self._update_numbers()
+		self._create_flaps()
 		GObject.timeout_add_seconds(1, self.on_tick)
 
-	def __create_flap(self, rank, value):
+	def _create_flap(self, rank, value):
 		flap = Flap(value, self._flap_size, self._font)
 		flap.set_position(rank*(self._flap_size[0]+self._inter_space), 0)
 		return flap
 
-	def __create_flaps(self):
+	def _create_flaps(self):
 		for rank, num in enumerate(self._number_values):
-			flap = self.__create_flap(rank, num)
+			flap = self._create_flap(rank, num)
 			self._flaps.append(flap)
 			self.add_actor(flap)
 
-	def __update_numbers(self):
+	def _update_numbers(self):
 		now = datetime.now()
 		old_numbers = self._number_values
 		#self._number_values = [now.hour/10, now.hour%10, now.minute/10, now.minute%10, now.second/10, now.second%10]
 		self._number_values = [now.hour, now.minute, now.second]
 		return [new != old for new, old in zip(self._number_values, old_numbers)]
 
-	def __update_number(self, rank, new_value):
-		new_flap = self.__create_flap(rank, new_value)
+	def _update_number(self, rank, new_value):
+		new_flap = self._create_flap(rank, new_value)
 		self.add_actor(new_flap)
 		old_flap = self._flaps[rank]
 		self._flaps[rank] = new_flap
@@ -89,24 +89,25 @@ class FlapClock(Clutter.Group):
 		transitions = []
 		for rank, (value, animate) in enumerate(zip(self._number_values, as_changed)):
 			if animate:
-				transitions.append(self.__update_number(rank, value))
-		[transition.start() for transition, rank, old_flap in transitions]
+				transitions.append(self._update_number(rank, value))
+		[transition.start() for transition, rank, _ in transitions]
 
 	def on_tick(self):
-		self.do_refresh_clock(self.__update_numbers())
+		self.do_refresh_clock(self._update_numbers())
 		return True
 
 class DoubleFlap(Clutter.Group):
 	__gtype_name__ = 'DoubleFlap'
 	def __init__(self, value, size, font, background_color="White", text_color="Black"):
 		Clutter.Group.__init__(self)
-		self.top = HalfFlap(value, size, background_color, text_color)
-		self.bottom = HalfFlap(value, size, False, background_color, text_color)
-		self.bottom.set_rotation(Clutter.RotateAxis.Y_AXIS, 180, self._back.get_width()/2, 0, 0)
-		self.add_actor(self.top, self.bottom)
+		self.top = HalfFlap(value, size, font, background_color, text_color)
+		self.bottom = HalfFlap(value, size, font, False, background_color, text_color)
+		self.bottom.set_rotation(Clutter.RotateAxis.Y_AXIS, 180, self.bottom.get_width()/2, 0, 0)
+		self.add_actor(self.top)
+		self.add_actor(self.bottom)
 
 
-class FlipClock(Clutter.Group):
+class FlipClock(FlapClock):
 	__gtype_name__ = 'FlipClock'
 
 	def __init__(self, font="Arial 48px", flap_size=(70, 60)):
@@ -116,16 +117,16 @@ class FlipClock(Clutter.Group):
 		self._number_values = 3*[0,]
 		self._inter_space = 10
 		self._flaps = []
-		self.__update_numbers()
-		self.__create_flaps()
+		self._update_numbers()
+		self._create_flaps()
 		GObject.timeout_add_seconds(1, self.on_tick)
 
-	def __create_flap(self, rank, value):
+	def _create_flap(self, rank, value):
 		flap = DoubleFlap(value, self._flap_size, self._font)
 		flap.set_position(rank*(self._flap_size[0]+self._inter_space), 0)
 		return flap
 
-	def __update_number(self, rank, new_value):
+	def _update_number(self, rank, new_value):
 		new_flap = self.__create_flap(rank, new_value)
 		self.add_actor(new_flap)
 		old_flap = self._flaps[rank]

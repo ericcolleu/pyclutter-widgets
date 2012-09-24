@@ -2,7 +2,7 @@
 
 from gi.repository import Clutter
 
-from test import PyClutTest
+from pyclut.test_tools import PyClutTest
 from pyclut.basics.double_face import DoubleFaceTexture
 from pyclut.effects.reflect import RotatingItem
 

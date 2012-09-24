@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 from gi.repository import Clutter
-from test import PyClutTest
 from pyclut.controls.clock import FlapClock, HalfFlap
+from pyclut.test_tools import PyClutTest
 
 class FlapClockTest(PyClutTest):
 	def __init__(self, *args, **kwargs):

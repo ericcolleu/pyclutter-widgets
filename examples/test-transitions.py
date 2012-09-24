@@ -2,7 +2,7 @@
 
 from gi.repository import Clutter, Cogl
 
-from test import PyClutTest
+from pyclut.test_tools import PyClutTest
 from pyclut.effects.transitions import TransitionZone
 from pyclut.effects.transitions.slide import SlideTransition
 from pyclut.effects.transitions.rotate import RotateTransition, FlapTransition
