@@ -1,5 +1,5 @@
 from gi.repository import Clutter
-from pyclut.effects.transitions import Transition, Direction
+from pyclut.effects.transitions import Transition
 from pyclut.animation import RotateAnimation, OpacityAnimation
 
 class RotateAndFadeAnimation(RotateAnimation, OpacityAnimation):
@@ -37,7 +37,6 @@ class RotateTransition(Transition):
 		self.__prepare_out_position()
 
 	def create_animations(self):
-		self._actor_in.show()
 		anim_in = RotateAndFadeAnimation(0, self._axis, self._direction, 255, self._duration, self._style, self._center)
 		anim_out = RotateAndFadeAnimation(-180, self._axis, self._direction, 0, self._duration, self._style, self._center)
 		return anim_in, anim_out

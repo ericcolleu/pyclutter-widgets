@@ -51,11 +51,11 @@ class Transition(GObject.Object):
 		self._saved_cull = Cogl.get_backface_culling_enabled()
 		Cogl.set_backface_culling_enabled(self._backface_culling)
 		self.preset_position()
-		self._actor_in.show()
 		anim_in, anim_out = self.create_animations()
 		anim_in.apply(self._actor_in)
 		anim_out.apply(self._actor_out)
 		anim_out.connect("completed", self._on_anim_completed)
+		self._actor_in.show()
 		anim_in.start()
 		anim_out.start()
 
