@@ -99,10 +99,10 @@ class Shape (Clutter.Actor):
 		pass
 
 	def __draw_shape(self, width, height, color=None, texture=None):
-		tmp_alpha = self.get_paint_opacity() * color.alpha / 255
 		if texture:
 			Cogl.set_source_texture(texture)
 		else:
+			tmp_alpha = self.get_paint_opacity() * color.alpha / 255
 			Cogl.set_source_color4ub(color.red, color.green, color.blue, tmp_alpha)
 		self.do_draw_shape(width, height)
 		Cogl.path_fill()
@@ -110,7 +110,8 @@ class Shape (Clutter.Actor):
 	def do_paint (self):
 		box = self.get_allocation_box()
 		if self._texture:
-			self.__draw_shape(box.x2 - box.x1, box.y2 - box.y1, texture = self._texture.get_cogl_texture())
+			#self.__draw_shape(box.x2 - box.x1, box.y2 - box.y1, texture = self._texture.get_cogl_texture())
+			self.__draw_shape(box.x2 - box.x1, box.y2 - box.y1, self._color, texture = self._texture.get_cogl_texture())
 		else:
 			self._color.alpha = self.get_paint_opacity()
 			self.__draw_shape(box.x2 - box.x1, box.y2 - box.y1, color = self._color)

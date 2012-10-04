@@ -43,18 +43,18 @@ def main(image_directory):
 	star.set_size(100, 100)
 	triangle.set_position(500, 200)
 	triangle.set_size(100, 100)
-	triangle.set_texture("images/textures/Electricity.jpg")
+	#triangle.set_texture("images/textures/Electricity.jpg")
 	triangle.set_opacity(150)
 	roundrect.set_position(300, 200)
 	roundrect.set_size(100, 100)
-	roundrect.set_texture("images/textures/cherry_wood.png")
+	#roundrect.set_texture("images/textures/cherry_wood.png")
 	roundrect.set_opacity(200)
 	roundrect.set_radius(25)
+	circle.radius = 50
 	circle.set_position(300, 400)
 	circle.set_size(100, 100)
-	circle.set_texture("images/textures/cherry_wood.png")
+	#circle.set_texture("images/textures/cherry_wood.png")
 	circle.set_opacity(255)
-	circle.radius = 50
 #	chrono.radius = 100
 #	chrono.set_position(512, 500)
 #	chrono.set_color("White")

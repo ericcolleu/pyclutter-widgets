@@ -16,6 +16,7 @@ setup(
 		'pyclut.effects',
 		'pyclut.effects.transitions',
 		'pyclut.menus',
+		'pyclut.test_tools',
 	],
 )
 

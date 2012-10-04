@@ -14,14 +14,14 @@ class RoundRectangle(Shape):
 		),
 		'radius': (
 			GObject.TYPE_INT, 'Radius', 'Radius of the round angles',
-			0, sys.maxint, 0, GObject.PARAM_READWRITE
+			0, 360, 0, GObject.PARAM_READWRITE
 		),
 		'border_color': (
 			str, 'border color', 'Border color', None, GObject.PARAM_READWRITE
 		),
 		'border_width' : (
 			GObject.TYPE_FLOAT, 'border width', 'Border width',
-			0.0, sys.maxint, 0.0, GObject.PARAM_READWRITE
+			0.0, 360, 0.0, GObject.PARAM_READWRITE
 		),
 	}
 	def __init__ (self):
