@@ -18,22 +18,22 @@ def do_quit(*args):
 
 def on_input(stage, event, carrousel, textcarrousel, item_images):
 	global current
-	if event.keyval == Clutter.KEY_Left:
+	if get_keyval(event) == Clutter.KEY_Left:
 		carrousel.previous()
-	elif event.keyval == Clutter.KEY_Right:
+	elif get_keyval(event) == Clutter.KEY_Right:
 		carrousel.next()
-	elif event.keyval == Clutter.KEY_Up:
+	elif get_keyval(event) == Clutter.KEY_Up:
 		textcarrousel.previous()
-	elif event.keyval == Clutter.KEY_Down:
+	elif get_keyval(event) == Clutter.KEY_Down:
 		textcarrousel.next()
-	elif event.keyval == Clutter.a or event.keyval == Clutter.A:
+	elif get_keyval(event) == Clutter.a or get_keyval(event) == Clutter.A:
 		carrousel.add_actor(Clutter.Texture.new_from_file(item_images[current]))
 		current = (current + 1) % len(item_images)
-	elif event.keyval == Clutter.s or event.keyval == Clutter.S:
+	elif get_keyval(event) == Clutter.s or get_keyval(event) == Clutter.S:
 		carrousel.show()
-	elif event.keyval == Clutter.h or event.keyval == Clutter.H:
+	elif get_keyval(event) == Clutter.h or get_keyval(event) == Clutter.H:
 		carrousel.hide()
-	elif event.keyval == Clutter.q or event.keyval == Clutter.Q:
+	elif get_keyval(event) == Clutter.q or get_keyval(event) == Clutter.Q:
 		Clutter.main_quit()
 
 def main(image_directory):

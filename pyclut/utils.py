@@ -9,6 +9,14 @@ def clamp_angle(x):
 	if x>360: x-=360
 	return x
 
+def get_keyval(event):
+	"""Depending on the clutter version, the key value on a KeyEvent
+	can be access by event.key.keyval or event.keyval"""
+	if hasattr(event, "key"):
+		return event.key.keyval
+	else:
+		return event.keyval
+
 class AbstractMethodNotImplemented(Exception): pass
 
 

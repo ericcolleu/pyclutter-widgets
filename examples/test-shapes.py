@@ -10,7 +10,7 @@ from pyclut.basics.rectangle import RoundRectangle
 from pyclut.basics.circle import Circle, CircleChrono
 
 def on_input(stage, event):
-	if event.keyval == Clutter.q:
+	if get_keyval(event) == Clutter.q:
 		Clutter.main_quit()
 
 def on_click(stage, event, chrono):

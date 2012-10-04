@@ -26,7 +26,7 @@ class PyClutTest(object):
 		Clutter.main_quit()
 
 	def on_input(self, stage, event):
-		if event.keyval == Clutter.q:
+		if get_keyval(event) == Clutter.q:
 			Clutter.main_quit()
 		else:
 			self.impl_on_input(stage, event)

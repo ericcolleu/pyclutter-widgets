@@ -10,15 +10,15 @@ class ThumbnailMenuTest(PyClutTest):
 		PyClutTest.__init__(self, *args, **kwargs)
 
 	def impl_on_input(self, stage, event):
-		if event.keyval == Clutter.Left:
+		if get_keyval(event) == Clutter.Left:
 			self.thumbnailmenu.previous()
-		elif event.keyval == Clutter.Right:
+		elif get_keyval(event) == Clutter.Right:
 			self.thumbnailmenu.next()
-		elif event.keyval == Clutter.Page_Down:
+		elif get_keyval(event) == Clutter.Page_Down:
 			self.thumbnailmenu.previous_page()
-		elif event.keyval == Clutter.Page_Up:
+		elif get_keyval(event) == Clutter.Page_Up:
 			self.thumbnailmenu.next_page()
-		elif event.keyval == Clutter.a:
+		elif get_keyval(event) == Clutter.a:
 			self.thumbnailmenu.add_actor(Clutter.Texture.new_from_file(self.get_image()))
 
 	def run(self):

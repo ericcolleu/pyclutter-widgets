@@ -6,7 +6,7 @@ import os
 import sys
 
 def on_input(stage, event):
-	if event.keyval == Clutter.q or event.keyval == Clutter.Q:
+	if get_keyval(event) == Clutter.q or get_keyval(event) == Clutter.Q:
 		Clutter.main_quit()
 
 def do_quit(*args):

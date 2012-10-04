@@ -7,11 +7,11 @@ import os.path
 from pyclut.menus.thumbnail_menu import ThumbnailPage
 
 def on_input(stage, event, thumbnailpage):
-	if event.keyval == Clutter.Left:
+	if get_keyval(event) == Clutter.Left:
 		thumbnailpage.select((thumbnailpage.get_selected()+1)%20)
-	elif event.keyval == Clutter.Right:
+	elif get_keyval(event) == Clutter.Right:
 		thumbnailpage.select((thumbnailpage.get_selected()-1)%20)
-	elif event.keyval == Clutter.q:
+	elif get_keyval(event) == Clutter.q:
 		Clutter.main_quit()
 
 def do_quit(*args):

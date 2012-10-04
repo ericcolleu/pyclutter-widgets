@@ -2,6 +2,7 @@
 
 from gi.repository import Clutter, GObject
 from pyclut.animation import Animator, TurnAroundAnimation
+from pyclut.utils import get_keyval
 import glob
 import os.path
 import pygtk
@@ -16,7 +17,7 @@ anims_label = ["Move", "Rotate", "Scale", "Opacify", "Depth"]
 global label
 
 def on_input(stage, event):
-	if event.keyval == Clutter.q:
+	if get_keyval(event) == Clutter.q:
 		Clutter.main_quit()
 
 def on_button_press(stage, event, factory, actor, _):
