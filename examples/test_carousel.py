@@ -1,14 +1,15 @@
 #!/usr/bin/python
 
-import pygtk
-pygtk.require('2.0')
 from gi.repository import Clutter
-
-import sys
+from pyclut.basics.rectangle import RoundRectangle
+from pyclut.menus.carrousel import Carrousel, TextCarrousel
+from pyclut.utils import get_keyval
 import glob
 import os.path
-from pyclut.menus.carrousel import Carrousel, TextCarrousel
-from pyclut.basics.rectangle import RoundRectangle
+import pygtk
+import sys
+pygtk.require('2.0')
+
 global current
 current=1
 

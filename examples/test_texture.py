@@ -1,6 +1,6 @@
 #!/usr/bin/python
-import sys
 from gi.repository import Clutter
+import sys
 
 def do_quit(*args):
 	Clutter.main_quit()

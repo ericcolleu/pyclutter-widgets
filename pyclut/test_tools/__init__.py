@@ -1,7 +1,8 @@
-import sys
 from gi.repository import Clutter
+from pyclut.utils import get_keyval
 import glob
 import os.path
+import sys
 
 class PyClutTest(object):
 	def __init__(self, resolution=(1024, 768), background_color=None, image_directory="./images"):

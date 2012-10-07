@@ -5,6 +5,7 @@ from gi.repository import Clutter
 import glob, time
 import os.path
 from pyclut.menus.thumbnail_menu import ThumbnailPage
+from pyclut.utils import get_keyval
 
 def on_input(stage, event, thumbnailpage):
 	if get_keyval(event) == Clutter.Left:

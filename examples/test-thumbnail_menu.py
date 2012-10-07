@@ -1,9 +1,10 @@
 ﻿#!/usr/bin/python
 
 from gi.repository import Clutter
-from pyclut.test_tools import PyClutTest
-from pyclut.menus.thumbnail_menu import ThumbnailMenu
 from pyclut.controls.button import PulseButton
+from pyclut.menus.thumbnail_menu import ThumbnailMenu
+from pyclut.test_tools import PyClutTest
+from pyclut.utils import get_keyval
 
 class ThumbnailMenuTest(PyClutTest):
 	def __init__(self, *args, **kwargs):

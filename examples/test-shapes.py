@@ -1,13 +1,16 @@
 #!/usr/bin/python
 
 from gi.repository import Clutter
-
-import glob, time, sys
-import os.path
+from pyclut.basics.circle import Circle, CircleChrono
+from pyclut.basics.rectangle import RoundRectangle
 from pyclut.basics.star import SixBranchStar
 from pyclut.basics.triangle import Triangle
-from pyclut.basics.rectangle import RoundRectangle
-from pyclut.basics.circle import Circle, CircleChrono
+import glob
+import os.path
+import sys
+import time
+from pyclut.utils import get_keyval
+
 
 def on_input(stage, event):
 	if get_keyval(event) == Clutter.q:
@@ -34,16 +37,16 @@ def main(image_directory):
 	circle = Circle()
 	#chrono = CircleChrono()
 	stage.show()
-	stage.add_actor(star)
+	#stage.add_actor(star)
 	stage.add_actor(triangle)
-	stage.add_actor(roundrect)
-	stage.add_actor(circle)
+	#stage.add_actor(roundrect)
+	#stage.add_actor(circle)
 #	stage.add_actor(chrono)
 	star.set_position(400, 200)
 	star.set_size(100, 100)
 	triangle.set_position(500, 200)
 	triangle.set_size(100, 100)
-	#triangle.set_texture("images/textures/Electricity.jpg")
+	triangle.set_texture("images/textures/Electricity.jpg")
 	triangle.set_opacity(150)
 	roundrect.set_position(300, 200)
 	roundrect.set_size(100, 100)

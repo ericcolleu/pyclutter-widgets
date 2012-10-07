@@ -2,9 +2,10 @@
 
 from gi.repository import Clutter
 from pyclut.menus.coverflow import Coverflow
+from pyclut.utils import get_keyval
 import glob
-import sys
 import os.path
+import sys
 
 global current
 current=1

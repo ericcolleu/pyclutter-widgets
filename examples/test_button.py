@@ -2,6 +2,7 @@
 
 from gi.repository import Clutter
 from pyclut.controls.button import ImageButton, PulseButton
+from pyclut.utils import get_keyval
 import os
 import sys
 

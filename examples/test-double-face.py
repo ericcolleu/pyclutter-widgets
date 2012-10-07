@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
 from gi.repository import Clutter
-
-from pyclut.test_tools import PyClutTest
 from pyclut.basics.double_face import DoubleFaceTexture
 from pyclut.effects.reflect import RotatingItem
+from pyclut.test_tools import PyClutTest
+
 
 
 class OdoTest(PyClutTest):
